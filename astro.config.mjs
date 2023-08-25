@@ -1,0 +1,23 @@
+import { defineConfig } from 'astro/config';
+import solidJs from '@astrojs/solid-js';
+import UnoCSS from 'unocss/astro';
+import vercel from '@astrojs/vercel/edge';
+import netlify from '@astrojs/netlify/edge-functions';
+import node from '@astrojs/node';
+
+const envAdapter = () => {
+  switch (process.env.OUTPUT) {
+    case 'vercel':
+      return vercel();
+    case 'netlify':
+      return netlify();
+    default:
+      return node({ mode: 'standalone' });
+  }
+};
+
+export default defineConfig({
+  integrations: [UnoCSS({ injectReset: true }), solidJs()],
+  output: 'server',
+  adapter: envAdapter(),
+});
