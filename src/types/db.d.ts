@@ -5,6 +5,12 @@ interface User {
   id: string
 }
 
+interface Session {
+  user: User & {
+    id: UserId
+  }
+}
+
 interface Chat {
   id: string
   messages: Message[]

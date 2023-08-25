@@ -1,6 +1,12 @@
 ---
+import { getSession } from '@solid-auth/base';
+import { authOptions } from '@/server/auth';
 const personResponse = await fetch('https://randomuser.me/api/');
 const personData = await personResponse.json();
 const randomPerson = personData.results[0];
+
+const session = await getSession(Astro.request, authOptions)
+console.log('[ cookie ] >',session )
+
 ---
-<p>{randomPerson.name.first}</p>
+<p class="color-red">{randomPerson.name.first}</p>

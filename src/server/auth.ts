@@ -1,8 +1,9 @@
 import GithubProvider from "@auth/core/providers/github";
 import { UpstashRedisAdapter } from '@next-auth/upstash-redis-adapter'
-import type { SolidAuthConfig } from "@solid-auth/base";
+import { SolidAuthConfig } from "@solid-auth/base";
 import { fetchRedis } from './redis'
 import { db } from './db'
+
 
 export const authOptions: SolidAuthConfig = {
   adapter: UpstashRedisAdapter(db) as any,
@@ -24,12 +25,10 @@ export const authOptions: SolidAuthConfig = {
 
   callbacks: {
     async jwt({ token, user }) {
-      console.log('[ token ] >', token)
 
       const dbUserResult = (await fetchRedis('get', `user:${token.sub}`)) as
         | string
         | null
-      console.log('[ dbUserResult ] >', dbUserResult)
       if (!dbUserResult) {
         if (user) {
           token.id = user!.id
@@ -49,9 +48,6 @@ export const authOptions: SolidAuthConfig = {
     },
     async session({ session, token }) {
       if (token) {
-        if (!session.user) {
-          session.user = {}
-        }
         (session.user as any).id = token.id
         session.user.name = token.name
         session.user.email = token.email
@@ -65,4 +61,3 @@ export const authOptions: SolidAuthConfig = {
     },
   },
 };
-
