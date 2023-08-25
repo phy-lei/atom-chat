@@ -25,7 +25,7 @@ export const authOptions: SolidAuthConfig = {
 
   callbacks: {
     async jwt({ token, user }) {
-
+      console.log('[ token ] >', token)
       const dbUserResult = (await fetchRedis('get', `user:${token.sub}`)) as
         | string
         | null
@@ -53,7 +53,6 @@ export const authOptions: SolidAuthConfig = {
         session.user.email = token.email
         session.user.image = token.picture
       }
-
       return session
     },
     redirect() {

@@ -1,6 +1,5 @@
 --- 
-import { getSession } from '@solid-auth/base';
-import { authOptions } from '@/server/auth';
+
 import FriendRequestSidebarOptions from '@/components/FriendRequestSidebarOptions'
 import SignOutButton from '@/components/SignOutButton';
 import { getFriendsByUserId, fetchRedis } from '@/server/redis'
@@ -8,9 +7,10 @@ import { chatHrefConstructor } from '@/utils'
 
 interface Props {
 	title: string;
+  session: Session
 }
 
-const { title } = Astro.props;
+const { title,session } = Astro.props;
 
 const sidebarOptions = [
   {
@@ -21,10 +21,6 @@ const sidebarOptions = [
   },
 ];
 
-const session: Session = await getSession(Astro.request, authOptions) as any
-console.log('[ cookie ] >',session )
-if (!session) Astro.redirect('/login');
-
 const friends = await getFriendsByUserId(session.user.id);
 const unseenRequestCount = (
     (await fetchRedis(
@@ -32,6 +28,7 @@ const unseenRequestCount = (
       `user:${session.user.id}:incoming_friend_requests`
     )) as User[]
   ).length;
+
 ---
 
 <!DOCTYPE html>
@@ -51,10 +48,8 @@ const unseenRequestCount = (
 
       <div class="hidden md:flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
         <a href="/dashboard" class="flex h-16 shrink-0 items-center">
-          <!-- logo -->
-          <div class="i-mingcute-loading-fill h-8 w-auto text-indigo-600" />
+          <i class="i-bx:bxs-paper-plane h-8 w-8  text-indigo-600" />
         </a>
-
         {friends.length > 0 ? (
           <div class="text-xs font-semibold leading-6 text-gray-400">
             Your chats
@@ -104,8 +99,7 @@ const unseenRequestCount = (
                         class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-3 rounded-md p-2 text-sm leading-6 font-semibold"
                       >
                         <span class="text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white">
-                          {/* logo */}
-                          <div class="i-mingcute-loading-fill h-4 w-4" />
+                          <div class="i-carbon:user-follow h-4 w-4" />
                         </span>
                         <span class="truncate">{option.name}</span>
                       </a>

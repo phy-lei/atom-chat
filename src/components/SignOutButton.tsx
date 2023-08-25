@@ -14,11 +14,10 @@ const SignOutButton = (props) => {
         await signOut();
       }}
     >
-      {isSigningOut ? (
-        <div class="i-mingcute-loading-fill  h-4 w-4 animate-spin" />
+      {isSigningOut() ? (
+        <div class="i-mingcute-loading-fill h-4 w-4 animate-spin" />
       ) : (
-        // <LogOut className='w-4 h-4' />
-        <div>123</div>
+        <div class="i-carbon:exit h-4 w-4" />
       )}
     </Button>
   );
