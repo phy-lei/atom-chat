@@ -1,7 +1,7 @@
 module.exports = {
   extends: ['@evan-yang', 'plugin:astro/recommended'],
   rules: {
-    'no-console': ['error', { allow: ['error'] }],
+    'no-console': 'off',
     'react/display-name': 'off',
     'react-hooks/rules-of-hooks': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
@@ -28,4 +28,4 @@ module.exports = {
       },
     },
   ],
-}
+};

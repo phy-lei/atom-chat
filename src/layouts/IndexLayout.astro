@@ -119,7 +119,7 @@ const unseenRequestCount = (
             <li class="-mx-6 mt-auto flex items-center">
               <div class="flex flex-1 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900">
                 <div class="relative h-8 w-8 bg-gray-50">
-                  <img class="rounded-full" src={session.user.image || ''} alt="Your profile picture">
+                  <img class="rounded-full w-8 h-8" src={session.user.image || ''} alt="Your profile picture">
                 </div>
 
                 <span class="sr-only">Your profile</span>
@@ -130,14 +130,14 @@ const unseenRequestCount = (
                   </span>
                 </div>
               </div>
-
+              
               <SignOutButton client:load class="h-full aspect-square" />
             </li>
           </ul>
         </nav>
       </div>
 
-      <aside class="max-h-screen container py-16 md:py-12 w-full">
+      <aside class="max-h-screen container-atom py-16 md:py-12 w-full">
         <slot />
       </aside>
     </div>
