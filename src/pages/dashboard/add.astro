@@ -5,7 +5,6 @@ import IndexLayout from '../../layouts/IndexLayout.astro';
 import AddFriendButton from '@/components/AddFriendButton';
 
 const session: Session = await getSession(Astro.request, authOptions) as any
-console.log('[ cookie ] >',session )
 if (!session) return Astro.redirect("/login")
 ---
 

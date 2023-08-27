@@ -15,6 +15,11 @@ const FriendRequestSidebarOptions = (
   );
 
   onMount(() => {
+    console.log(
+      '%c [ xxx ]',
+      'font-size:13px; background:pink; color:#bf2c9f;',
+      123123
+    );
     pusherClient.subscribe(
       toPusherKey(`user:${props.sessionId}:incoming_friend_requests`)
     );
