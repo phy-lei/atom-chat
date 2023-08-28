@@ -74,7 +74,11 @@ export const post: APIRoute = async (context) => {
     )
 
     await db.sadd(`user:${idToAdd}:incoming_friend_requests`, session.user.id)
-    return new Response('OK')
+    return new Response(JSON.stringify({
+      message: 'Ok'
+    }), {
+      status: 200,
+    })
   }
   catch (error) {
     return new Response(JSON.stringify({

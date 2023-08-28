@@ -72,7 +72,11 @@ export const post: APIRoute = async (context) => {
       db.srem(`user:${session.user.id}:incoming_friend_requests`, idToAdd),
     ])
 
-    return new Response('OK')
+    return new Response(JSON.stringify({
+      message: 'Ok'
+    }), {
+      status: 200,
+    })
   }
   catch (error) {
     return new Response(JSON.stringify({

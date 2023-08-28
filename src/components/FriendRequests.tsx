@@ -68,7 +68,7 @@ const FriendRequests = (props: FriendRequestsProps) => {
   return (
     <>
       <Show
-        when={friendRequests.length !== 0}
+        when={friendRequests().length !== 0}
         fallback={<p class="text-sm text-zinc-500">Nothing to show here...</p>}
       >
         <For each={friendRequests()}>
