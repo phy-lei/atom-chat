@@ -1,12 +1,10 @@
-
-import type { APIRoute } from 'astro'
-import { getSession } from '@solid-auth/base';
-import { authOptions } from '@/server/auth';
+import { getSession } from '@solid-auth/base'
+import { authOptions } from '@/server/auth'
 import { fetchRedis } from '@/server/redis'
 import { db } from '@/server/db'
 import { pusherServer } from '@/server/pusherServer'
 import { toPusherKey } from '@/utils'
-
+import type { APIRoute } from 'astro'
 
 export const post: APIRoute = async (context) => {
   try {
@@ -14,12 +12,12 @@ export const post: APIRoute = async (context) => {
     const { email } = body
     const idToAdd = (await fetchRedis(
       'get',
-      `user:email:${email}`
+      `user:email:${email}`,
     )) as string
 
     if (!idToAdd) {
       return new Response(JSON.stringify({
-        message: 'This person does not exist.'
+        message: 'This person does not exist.',
       }), { status: 400 })
     }
 
@@ -27,12 +25,12 @@ export const post: APIRoute = async (context) => {
 
     if (!session) {
       return new Response(JSON.stringify({
-        message: 'Unauthorized'
+        message: 'Unauthorized',
       }), { status: 401 })
     }
     if (idToAdd === session.user.id) {
       return new Response(JSON.stringify({
-        message: 'You cannot add yourself as a friend'
+        message: 'You cannot add yourself as a friend',
       }), {
         status: 400,
       })
@@ -41,12 +39,12 @@ export const post: APIRoute = async (context) => {
     const isAlreadyAdded = (await fetchRedis(
       'sismember',
       `user:${idToAdd}:incoming_friend_requests`,
-      session.user.id
+      session.user.id,
     )) as 0 | 1
 
     if (isAlreadyAdded) {
       return new Response(JSON.stringify({
-        message: 'Already added this user'
+        message: 'Already added this user',
       }), { status: 400 })
     }
 
@@ -54,12 +52,12 @@ export const post: APIRoute = async (context) => {
     const isAlreadyFriends = (await fetchRedis(
       'sismember',
       `user:${session.user.id}:friends`,
-      idToAdd
+      idToAdd,
     )) as 0 | 1
 
     if (isAlreadyFriends) {
       return new Response(JSON.stringify({
-        message: 'Already friends with this user'
+        message: 'Already friends with this user',
       }), { status: 400 })
     }
 
@@ -70,19 +68,18 @@ export const post: APIRoute = async (context) => {
       {
         senderId: session.user.id,
         senderEmail: session.user.email,
-      }
+      },
     )
 
     await db.sadd(`user:${idToAdd}:incoming_friend_requests`, session.user.id)
     return new Response(JSON.stringify({
-      message: 'Ok'
+      message: 'Ok',
     }), {
       status: 200,
     })
-  }
-  catch (error) {
+  } catch (error) {
     return new Response(JSON.stringify({
-      message: 'Invalid request'
+      message: 'Invalid request',
     }), { status: 400 })
   }
 }

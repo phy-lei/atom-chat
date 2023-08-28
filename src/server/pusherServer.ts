@@ -12,6 +12,3 @@ export const pusherServer = new PusherServer({
   cluster,
   useTLS: true,
 })
-
-
-

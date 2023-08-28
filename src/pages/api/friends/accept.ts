@@ -1,12 +1,10 @@
-
-import type { APIRoute } from 'astro'
-import { getSession } from '@solid-auth/base';
-import { authOptions } from '@/server/auth';
+import { getSession } from '@solid-auth/base'
+import { authOptions } from '@/server/auth'
 import { fetchRedis } from '@/server/redis'
 import { db } from '@/server/db'
 import { pusherServer } from '@/server/pusherServer'
 import { toPusherKey } from '@/utils'
-
+import type { APIRoute } from 'astro'
 
 export const post: APIRoute = async (context) => {
   try {
@@ -16,7 +14,7 @@ export const post: APIRoute = async (context) => {
 
     if (!session) {
       return new Response(JSON.stringify({
-        message: 'Unauthorized'
+        message: 'Unauthorized',
       }), { status: 401 })
     }
 
@@ -24,26 +22,24 @@ export const post: APIRoute = async (context) => {
     const isAlreadyFriends = await fetchRedis(
       'sismember',
       `user:${session.user.id}:friends`,
-      idToAdd
+      idToAdd,
     )
 
     if (isAlreadyFriends) {
-
       return new Response(JSON.stringify({
-        message: 'Already friends'
+        message: 'Already friends',
       }), { status: 400 })
     }
 
     const hasFriendRequest = await fetchRedis(
       'sismember',
       `user:${session.user.id}:incoming_friend_requests`,
-      idToAdd
+      idToAdd,
     )
 
     if (!hasFriendRequest) {
-
       return new Response(JSON.stringify({
-        message: 'No friend request'
+        message: 'No friend request',
       }), { status: 400 })
     }
 
@@ -60,12 +56,12 @@ export const post: APIRoute = async (context) => {
       pusherServer.trigger(
         toPusherKey(`user:${idToAdd}:friends`),
         'new_friend',
-        user
+        user,
       ),
       pusherServer.trigger(
         toPusherKey(`user:${session.user.id}:friends`),
         'new_friend',
-        friend
+        friend,
       ),
       db.sadd(`user:${session.user.id}:friends`, idToAdd),
       db.sadd(`user:${idToAdd}:friends`, session.user.id),
@@ -73,14 +69,13 @@ export const post: APIRoute = async (context) => {
     ])
 
     return new Response(JSON.stringify({
-      message: 'Ok'
+      message: 'Ok',
     }), {
       status: 200,
     })
-  }
-  catch (error) {
+  } catch (error) {
     return new Response(JSON.stringify({
-      message: 'Invalid request'
+      message: 'Invalid request',
     }), { status: 400 })
   }
 }

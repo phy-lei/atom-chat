@@ -4,7 +4,7 @@
   },
   "eslint.options": {
     //指定eslint配置文件位置
-    "overrideConfigFile": ".eslintrc.js" //指定项目根目录中的eslint配置文件
+    "overrideConfigFile": ".eslintrc.cjs" //指定项目根目录中的eslint配置文件
   },
   "editor.formatOnSave": true,
   "eslint.validate": [

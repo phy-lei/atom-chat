@@ -1,9 +1,8 @@
-import GithubProvider from "@auth/core/providers/github";
+import GithubProvider from '@auth/core/providers/github'
 import { UpstashRedisAdapter } from '@next-auth/upstash-redis-adapter'
-import { SolidAuthConfig } from "@solid-auth/base";
 import { fetchRedis } from './redis'
 import { db } from './db'
-
+import type { SolidAuthConfig } from '@solid-auth/base'
 
 export const authOptions: SolidAuthConfig = {
   adapter: UpstashRedisAdapter(db) as any,
@@ -30,9 +29,8 @@ export const authOptions: SolidAuthConfig = {
         | string
         | null
       if (!dbUserResult) {
-        if (user) {
+        if (user)
           token.id = user!.id
-        }
 
         return token
       }
@@ -59,4 +57,4 @@ export const authOptions: SolidAuthConfig = {
       return '/dashboard'
     },
   },
-};
+}

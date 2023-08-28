@@ -1,8 +1,7 @@
-
-import type { APIRoute } from 'astro'
-import { getSession } from '@solid-auth/base';
-import { authOptions } from '@/server/auth';
+import { getSession } from '@solid-auth/base'
+import { authOptions } from '@/server/auth'
 import { db } from '@/server/db'
+import type { APIRoute } from 'astro'
 
 export const post: APIRoute = async (context) => {
   try {
@@ -12,21 +11,20 @@ export const post: APIRoute = async (context) => {
 
     if (!session) {
       return new Response(JSON.stringify({
-        message: 'Unauthorized'
+        message: 'Unauthorized',
       }), { status: 401 })
     }
 
     await db.srem(`user:${session.user.id}:incoming_friend_requests`, idToDeny)
 
     return new Response(JSON.stringify({
-      message: 'Ok'
+      message: 'Ok',
     }), {
       status: 200,
     })
-  }
-  catch (error) {
+  } catch (error) {
     return new Response(JSON.stringify({
-      message: 'Invalid request'
+      message: 'Invalid request',
     }), { status: 400 })
   }
 }
