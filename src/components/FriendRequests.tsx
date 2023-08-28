@@ -34,8 +34,8 @@ const FriendRequests = (props: FriendRequestsProps) => {
     });
   });
 
-  const acceptFriend = async (senderId: string) => {
-    const res = await fetch('/api/friends/accept', {
+  const requestApi = async (action: 'accept' | 'deny', senderId: string) => {
+    const res = await fetch(`/api/friends/${action}`, {
       method: 'POST',
       body: JSON.stringify({
         id: senderId,
@@ -50,19 +50,12 @@ const FriendRequests = (props: FriendRequestsProps) => {
     }
   };
 
+  const acceptFriend = async (senderId: string) => {
+    requestApi('accept', senderId);
+  };
+
   const denyFriend = async (senderId: string) => {
-    const res = await fetch('/api/friends/deny', {
-      method: 'POST',
-      body: JSON.stringify({
-        id: senderId,
-      }),
-    });
-    if (res.ok) {
-      setFriendRequests((prev) =>
-        prev.filter((request) => request.senderId !== senderId)
-      );
-      window.location.reload();
-    }
+    requestApi('deny', senderId);
   };
 
   return (
