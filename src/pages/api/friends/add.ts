@@ -4,7 +4,7 @@ import { getSession } from '@solid-auth/base';
 import { authOptions } from '@/server/auth';
 import { fetchRedis } from '@/server/redis'
 import { db } from '@/server/db'
-import { pusherServer } from '@/server/pusher'
+import { pusherServer } from '@/server/pusherServer'
 import { toPusherKey } from '@/utils'
 
 
@@ -12,7 +12,6 @@ export const post: APIRoute = async (context) => {
   try {
     const body = await context.request.json()
     const { email } = body
-    console.log('[ email ] >', email)
     const idToAdd = (await fetchRedis(
       'get',
       `user:email:${email}`
@@ -31,9 +30,7 @@ export const post: APIRoute = async (context) => {
         message: 'Unauthorized'
       }), { status: 401 })
     }
-    console.log('[  idToAdd] >', idToAdd === session.user.id)
     if (idToAdd === session.user.id) {
-
       return new Response(JSON.stringify({
         message: 'You cannot add yourself as a friend'
       }), {

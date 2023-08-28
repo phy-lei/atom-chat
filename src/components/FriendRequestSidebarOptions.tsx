@@ -1,5 +1,5 @@
-import { createSignal, onMount } from 'solid-js';
-import { pusherClient } from '@/server/pusher';
+import { createSignal, onMount, onCleanup } from 'solid-js';
+import { pusherClient } from '@/server/pusherClient';
 import { toPusherKey } from '@/utils';
 
 interface FriendRequestSidebarOptionsProps {
@@ -15,11 +15,6 @@ const FriendRequestSidebarOptions = (
   );
 
   onMount(() => {
-    console.log(
-      '%c [ xxx ]',
-      'font-size:13px; background:pink; color:#bf2c9f;',
-      123123
-    );
     pusherClient.subscribe(
       toPusherKey(`user:${props.sessionId}:incoming_friend_requests`)
     );
@@ -36,7 +31,7 @@ const FriendRequestSidebarOptions = (
     pusherClient.bind('incoming_friend_requests', friendRequestHandler);
     pusherClient.bind('new_friend', addedFriendHandler);
 
-    return () => {
+    onCleanup(() => {
       pusherClient.unsubscribe(
         toPusherKey(`user:${props.sessionId}:incoming_friend_requests`)
       );
@@ -44,7 +39,7 @@ const FriendRequestSidebarOptions = (
 
       pusherClient.unbind('new_friend', addedFriendHandler);
       pusherClient.unbind('incoming_friend_requests', friendRequestHandler);
-    };
+    });
   });
 
   return (
