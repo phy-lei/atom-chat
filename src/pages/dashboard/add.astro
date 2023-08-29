@@ -1,10 +1,10 @@
 ---
-import { getSession } from '@solid-auth/base'
-import { authOptions } from '@/server/auth'
-import AddFriendButton from '@/components/AddFriendButton'
-import IndexLayout from '../../layouts/IndexLayout.astro'
+import { getSession } from '@solid-auth/base';
+import { authOptions } from '@/server/auth';
+import AddFriendButton from '@/components/AddFriendButton';
+import IndexLayout from '../../layouts/IndexLayout.astro';
 
-const session: Session = (await getSession(Astro.request, authOptions)) as any
+const session: Session = (await getSession(Astro.request, authOptions)) as any;
 if (!session) return Astro.redirect('/login');
 ---
 
