@@ -7,6 +7,7 @@ enum MessageTypes {
 }
 const AddFriendButton = (props) => {
   const [value, setValue] = createSignal('');
+  const [loading, setLoading] = createSignal(false);
   const [message, setMessage] = createSignal({
     type: MessageTypes.null,
     text: '',
@@ -15,6 +16,7 @@ const AddFriendButton = (props) => {
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   const addFriend = async (email: string) => {
+    setLoading(true);
     const res = await fetch('/api/friends/add', {
       method: 'POST',
       body: JSON.stringify({
@@ -33,6 +35,7 @@ const AddFriendButton = (props) => {
         text: responseJson.message,
       });
     }
+    setLoading(false);
   };
 
   const handleSubmit = () => {
@@ -59,7 +62,7 @@ const AddFriendButton = (props) => {
   };
 
   return (
-    <div onSubmit={handleSubmit} class="max-w-sm">
+    <div class="max-w-sm">
       <label
         html-for="email"
         class="block text-sm font-medium leading-6 text-gray-900"
@@ -74,7 +77,10 @@ const AddFriendButton = (props) => {
           placeholder="you@example.com"
           onInput={handleInput}
         />
-        <Button onClick={handleSubmit}>Add</Button>
+        <Button onClick={handleSubmit} isLoading={loading()}>
+          {loading() ? null : <i class="i-carbon:add mr-2 w-4 h-4"></i>}
+          Add
+        </Button>
       </div>
       <Switch fallback={null}>
         <Match when={message().type === MessageTypes.success}>
