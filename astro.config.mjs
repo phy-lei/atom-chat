@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import solidJs from '@astrojs/solid-js';
 import UnoCSS from 'unocss/astro';
 import vercel from '@astrojs/vercel/edge';
-import netlify from '@astrojs/netlify/edge-functions';
+import netlify from '@astrojs/netlify/functions';
 import node from '@astrojs/node';
 
 const envAdapter = () => {

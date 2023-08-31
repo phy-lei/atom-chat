@@ -1,5 +1,7 @@
 # build output
 dist/
+.netlify/
+.vercel/
 
 # generated types
 .astro/
@@ -19,3 +21,4 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
