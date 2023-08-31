@@ -5,6 +5,7 @@ import IndexLayout from '@/layouts/IndexLayout.astro';
 import { fetchRedis } from '@/server/redis';
 import Messages from '@/components/Messages';
 import ChatInput from '@/components/ChatInput';
+import { Toaster } from 'solid-toast';
 
 const session: Session = (await getSession(Astro.request, authOptions)) as any;
 if (!session) return Astro.redirect('/login');
@@ -67,9 +68,11 @@ const initialMessages = results
       sessionImg={session.user.image}
       sessionId={session.user.id}
       initialMessages={initialMessages}
+      client:load
     />
-    <ChatInput chatId={chatId} chatPartner={chatPartner} />
+    <ChatInput chatId={chatId} chatPartner={chatPartner} client:load />
   </div>
+  <Toaster client:load />
 </IndexLayout>
 
 <style></style>

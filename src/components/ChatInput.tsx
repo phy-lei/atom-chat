@@ -1,4 +1,5 @@
 import { createSignal } from 'solid-js';
+import toast from 'solid-toast';
 import Button from './ui/Button';
 
 interface ChatInputProps {
@@ -13,31 +14,24 @@ const ChatInput = (props: ChatInputProps) => {
 
   const sendMessage = async (value: string) => {
     if (!value) return;
+    setInput('');
     setIsLoading(true);
-    try {
-      // await axios.post('/api/message/send', { text: value, chatId });
-      setInput('');
-      textareaRef?.focus();
-    } catch {
-      // toast.error('Something went wrong. Please try again later.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handlePaste = async (event: any) => {
-    uploadPasteImages(event).then(async (res: string | null) => {
-      if (res) {
-        // await axios
-        //   .post('/api/file/upload', { base64: res })
-        //   .then((response) => {
-        //     sendMessage(response.data);
-        //   });
-      }
+    const res = await fetch('/api/message/send', {
+      method: 'POST',
+      body: JSON.stringify({
+        text: value,
+        chatId: props.chatId,
+      }),
     });
+    if (!res.ok) {
+      setInput(value);
+      toast.error('Something went wrong. Please try again later.');
+    }
+    textareaRef?.focus();
+    setIsLoading(false);
   };
 
-  const uploadPasteImages = (event: any) => {
+  const uploadPasteImages = (event: ClipboardEvent) => {
     return new Promise<string | null>((resolve, reject) => {
       const cvs = event.clipboardData.items;
       if (!event.clipboardData || !cvs) {
@@ -54,6 +48,26 @@ const ChatInput = (props: ChatInputProps) => {
             const base64 = e.target.result.split('base64,')[1];
             resolve(base64);
           };
+        }
+      } else {
+        resolve(null);
+      }
+    });
+  };
+
+  const handlePaste = async (event: ClipboardEvent) => {
+    uploadPasteImages(event).then(async (res: string | null) => {
+      if (res) {
+        const response = await fetch('/api/file/upload', {
+          method: 'POST',
+          body: JSON.stringify({
+            base64: res,
+          }),
+        });
+        const responseJson = await response.json();
+
+        if (response.ok) {
+          sendMessage(responseJson.data);
         }
       }
     });
@@ -74,10 +88,11 @@ const ChatInput = (props: ChatInputProps) => {
           rows={1}
           disabled={isLoading()}
           value={input()}
-          onChange={(e) => setInput(e.target.value)}
+          onInput={(e) => setInput(e.target.value)}
           placeholder={`Message ${props.chatPartner.name}`}
           class="gen-textarea min-h-22 max-h-22"
-        />
+          autofocus
+        ></textarea>
 
         <div class="flex bg-(slate op-15) pr-2 pt-6">
           <div class="flex-shrin-0">

@@ -1,5 +1,6 @@
-import { createMemo, Show, For } from 'solid-js';
+import { Show, For } from 'solid-js';
 import { clsx } from 'clsx';
+import toast from 'solid-toast';
 import { format } from 'date-fns';
 
 interface ChatBubblesProps {
@@ -60,33 +61,26 @@ const ChatBubble = (props: ChatBubblesProps) => {
 
   const handleDeleteMessage = async (_message: Message) => {
     if (!_message) return;
-    try {
-      // const toastId = toast.loading('message is being deleted...');
-      // await axios
-      //   .post('/api/message/delete', { chatId, message: [message], index })
-      //   .then((res) => {
-      //     if (res.status === 200) {
-      //       if (res.data === 0) {
-      //         toast.error('no message has been deleted !', {
-      //           id: toastId,
-      //           duration: 800,
-      //         });
-      //       } else {
-      //         toast.success('message has been deleted ~', {
-      //           id: toastId,
-      //           duration: 800,
-      //         });
-      //       }
-      //     }
-      //   })
-      //   .catch(() => {
-      //     toast.error('Something went wrong. Please try again later.', {
-      //       id: toastId,
-      //       duration: 800,
-      //     });
-      //   });
-    } catch {
-      // toast.error('Something went wrong. Please try again later.');
+
+    const toastId = toast.loading('message is being deleted...');
+    const res = await fetch('/api/message/delete', {
+      method: 'POST',
+      body: JSON.stringify({
+        message: [_message],
+        chatId: props.chatId,
+        index: props.index,
+      }),
+    });
+    if (res.ok) {
+      toast.success('message has been deleted ~', {
+        id: toastId,
+        duration: 800,
+      });
+    } else {
+      toast.error('no message has been deleted !', {
+        id: toastId,
+        duration: 800,
+      });
     }
   };
 
@@ -100,7 +94,10 @@ const ChatBubble = (props: ChatBubblesProps) => {
       })}
     >
       <Show when={props.isCurrentUser} fallback={null}>
-        <i class="i-carbon:trash-can cursor-pointer"></i>
+        <i
+          class="i-carbon:trash-can cursor-pointer"
+          onClick={() => handleDeleteMessage(props.message)}
+        ></i>
       </Show>
       <Show
         when={!isImage()}

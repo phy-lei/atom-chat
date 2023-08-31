@@ -24,7 +24,6 @@ export const authOptions: SolidAuthConfig = {
 
   callbacks: {
     async jwt({ token, user }) {
-      console.log('[ token ] >', token)
       const dbUserResult = (await fetchRedis('get', `user:${token.sub}`)) as
         | string
         | null
