@@ -2,14 +2,78 @@
 import { getSession } from '@solid-auth/base';
 import { authOptions } from '@/server/auth';
 import IndexLayout from '../../layouts/IndexLayout.astro';
+import { getFriendsByUserId, fetchRedis } from '@/server/redis';
+import { chatHrefConstructor } from '@/utils';
 
 const session: Session = (await getSession(Astro.request, authOptions)) as any;
 if (!session) return Astro.redirect('/login');
+
+const friends = await getFriendsByUserId(session.user.id);
+
+const friendsWithLastMessage = await Promise.all(
+  friends.map(async (friend) => {
+    const [lastMessageRaw] = (await fetchRedis(
+      'zrange',
+      `chat:${chatHrefConstructor(session.user.id, friend.id)}:messages`,
+      -1,
+      -1
+    )) as string[];
+
+    const lastMessage = JSON.parse(lastMessageRaw) as Message;
+
+    return {
+      ...friend,
+      lastMessage,
+    };
+  })
+);
 ---
 
 <IndexLayout title="Welcome to Astro." session={session}>
   <main class="pt-8">
-    <h2>Recent chats</h2>
+    <h1 class="font-bold text-5xl mb-8">Recent chats</h1>
+    {
+      friendsWithLastMessage.length === 0 ? (
+        <p class="text-sm text-zinc-500">Nothing to show here...</p>
+      ) : (
+        friendsWithLastMessage.map((friend) => (
+          <div class="relative bg-zinc-50 border border-zinc-200 p-3 rounded-md mt-4">
+            <div class="absolute right-4 inset-y-0 flex items-center">
+              <div class="i-carbon:chevron-right h-7 w-7 text-zinc-400" />
+            </div>
+            <a
+              href={`/dashboard/chat/${chatHrefConstructor(
+                session.user.id,
+                friend.id
+              )}`}
+              class="relative sm:flex"
+            >
+              <div class="mb-4 flex-shrink-0 sm:mb-0 sm:mr-4">
+                <div class="relative h-6 w-6">
+                  <img
+                    class="rounded-full"
+                    alt={`${friend.name} profile picture`}
+                    src={friend.image}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold">{friend.name}</h4>
+                <p class="mt-1 max-w-md">
+                  <span class="text-zinc-400">
+                    {friend.lastMessage.senderId === session.user.id
+                      ? 'You: '
+                      : ''}
+                  </span>
+                  {friend.lastMessage.text}
+                </p>
+              </div>
+            </a>
+          </div>
+        ))
+      )
+    }
   </main>
 </IndexLayout>
 
