@@ -1,0 +1,122 @@
+import {
+  createSignal,
+  onMount,
+  onCleanup,
+  createEffect,
+  Show,
+  For,
+} from 'solid-js';
+import toast from 'solid-toast';
+import { pusherClient } from '@/server/pusherClient';
+import { toPusherKey, chatHrefConstructor } from '@/utils';
+import UnseenChatToast from './UnseenChatToast';
+
+interface SidebarChatListProps {
+  friends: User[];
+  sessionId: string;
+}
+
+interface ExtendedMessage extends Message {
+  senderImg: string;
+  senderName: string;
+}
+
+const SidebarChatList = (props: SidebarChatListProps) => {
+  const [unseenMessages, setUnseenMessages] = createSignal<Message[]>([]);
+  const [activeChats, setActiveChats] = createSignal<User[]>(props.friends);
+
+  onMount(() => {
+    pusherClient.subscribe(toPusherKey(`user:${props.sessionId}:chats`));
+    pusherClient.subscribe(toPusherKey(`user:${props.sessionId}:friends`));
+
+    const newFriendHandler = (newFriend: User) => {
+      setActiveChats((prev) => [...prev, newFriend]);
+    };
+
+    const chatHandler = (message: ExtendedMessage) => {
+      const shouldNotify =
+        window.location.pathname !==
+        `/dashboard/chat/${chatHrefConstructor(
+          props.sessionId,
+          message.senderId
+        )}`;
+
+      if (!shouldNotify) return;
+
+      // should be notified
+      toast.custom((t) => (
+        <UnseenChatToast
+          t={t}
+          sessionId={props.sessionId}
+          senderId={message.senderId}
+          senderImg={message.senderImg}
+          senderMessage={message.text}
+          senderName={message.senderName}
+        />
+      ));
+
+      setUnseenMessages((prev) => [...prev, message]);
+    };
+
+    pusherClient.bind('new_message', chatHandler);
+    pusherClient.bind('new_friend', newFriendHandler);
+
+    onCleanup(() => {
+      pusherClient.unsubscribe(toPusherKey(`user:${props.sessionId}:chats`));
+      pusherClient.unsubscribe(toPusherKey(`user:${props.sessionId}:friends`));
+
+      pusherClient.unbind('new_message', chatHandler);
+      pusherClient.unbind('new_friend', newFriendHandler);
+    });
+  });
+
+  createEffect(() => {
+    if (window.location.pathname.includes('chat')) {
+      setUnseenMessages((prev) => {
+        return prev.filter(
+          (msg) => !window.location.pathname.includes(msg.senderId)
+        );
+      });
+    }
+  });
+
+  return (
+    <ul role="list" class="max-h-[25rem] overflow-y-auto -mx-2 space-y-1">
+      <li>
+        <a
+          href={`/dashboard/ai`}
+          class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+        >
+          Rayone
+        </a>
+      </li>
+      <For each={activeChats().sort()}>
+        {(friend) => {
+          const unseenMessagesCount = unseenMessages().filter((unseenMsg) => {
+            return unseenMsg.senderId === friend.id;
+          }).length;
+          return (
+            <li>
+              <a
+                href={`/dashboard/chat/${chatHrefConstructor(
+                  props.sessionId,
+                  friend.id
+                )}`}
+                class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+              >
+                {friend.name}
+                <Show when={unseenMessagesCount > 0} fallback={null}>
+                  <div class="bg-indigo-600 font-medium text-xs text-white w-4 h-4 rounded-full flex justify-center items-center">
+                    {unseenMessagesCount}
+                  </div>
+                </Show>
+              </a>
+            </li>
+          );
+        }}
+      </For>
+    </ul>
+  );
+};
+
+export default SidebarChatList;

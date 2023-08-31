@@ -1,15 +1,18 @@
 ---
+import { Toaster } from 'solid-toast';
 import FriendRequestSidebarOptions from '@/components/FriendRequestSidebarOptions';
 import SignOutButton from '@/components/SignOutButton';
 import { getFriendsByUserId, fetchRedis } from '@/server/redis';
 import { chatHrefConstructor } from '@/utils';
+import SidebarChatList from '@/components/SidebarChatList';
 
 interface Props {
   title: string;
   session: Session;
+  _friends?: User[];
 }
 
-const { title, session } = Astro.props;
+const { title, session, _friends } = Astro.props;
 
 const sidebarOptions = [
   {
@@ -20,7 +23,7 @@ const sidebarOptions = [
   },
 ];
 
-const friends = await getFriendsByUserId(session.user.id);
+const friends = _friends ?? (await getFriendsByUserId(session.user.id));
 const unseenRequestCount = (
   (await fetchRedis(
     'smembers',
@@ -58,36 +61,11 @@ const unseenRequestCount = (
         <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
-              <ul
-                role="list"
-                class="max-h-[25rem] overflow-y-auto -mx-2 space-y-1"
-              >
-                <li>
-                  <a
-                    href={`/dashboard/ai`}
-                    class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                  >
-                    Rayone
-                  </a>
-                </li>
-                {
-                  friends.map((friend) => {
-                    return (
-                      <li>
-                        <a
-                          href={`/dashboard/chat/${chatHrefConstructor(
-                            session.user.id,
-                            friend.id
-                          )}`}
-                          class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                        >
-                          {friend.name}
-                        </a>
-                      </li>
-                    );
-                  })
-                }
-              </ul>
+              <SidebarChatList
+                client:load
+                sessionId={session.user.id}
+                friends={friends}
+              />
             </li>
             <li>
               <div class="text-xs font-semibold leading-6 text-gray-400">
@@ -152,6 +130,7 @@ const unseenRequestCount = (
 
       <aside class="max-h-screen container-atom py-16 md:py-12 w-full">
         <slot />
+        <Toaster client:load />
       </aside>
     </div>
   </body>
