@@ -8,7 +8,7 @@ interface ChatInputProps {
 }
 
 const ChatInput = (props: ChatInputProps) => {
-  let textareaRef: HTMLTextAreaElement | null;
+  const [textareaRef, setTextareaRef] = createSignal<HTMLTextAreaElement>();
   const [isLoading, setIsLoading] = createSignal<boolean>(false);
   const [input, setInput] = createSignal<string>('');
 
@@ -27,8 +27,8 @@ const ChatInput = (props: ChatInputProps) => {
       setInput(value);
       toast.error('Something went wrong. Please try again later.');
     }
-    textareaRef?.focus();
     setIsLoading(false);
+    textareaRef().focus();
   };
 
   const uploadPasteImages = (event: ClipboardEvent) => {
@@ -77,7 +77,7 @@ const ChatInput = (props: ChatInputProps) => {
     <div class="border-t border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
       <div class="relative flex flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
         <textarea
-          ref={textareaRef}
+          ref={setTextareaRef}
           onKeyDown={(e) => {
             if (e.keyCode === 13 && !e.shiftKey) {
               e.preventDefault();
