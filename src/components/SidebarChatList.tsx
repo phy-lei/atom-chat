@@ -22,7 +22,9 @@ interface ExtendedMessage extends Message {
 }
 
 const SidebarChatList = (props: SidebarChatListProps) => {
-  const [unseenMessages, setUnseenMessages] = createSignal<Message[]>([]);
+  const [unseenMessages, setUnseenMessages] = createSignal<
+    Record<string, Message[]>
+  >({});
   const [activeChats, setActiveChats] = createSignal<User[]>(props.friends);
 
   onMount(() => {
@@ -54,8 +56,13 @@ const SidebarChatList = (props: SidebarChatListProps) => {
           senderName={message.senderName}
         />
       ));
-
-      setUnseenMessages((prev) => [...prev, message]);
+      setUnseenMessages((prev) => {
+        const prevArr = prev[message.senderId] ?? [];
+        return {
+          ...prev,
+          [message['senderId']]: [...prevArr, message],
+        };
+      });
     };
 
     pusherClient.bind('new_message', chatHandler);
@@ -73,9 +80,13 @@ const SidebarChatList = (props: SidebarChatListProps) => {
   createEffect(() => {
     if (window.location.pathname.includes('chat')) {
       setUnseenMessages((prev) => {
-        return prev.filter(
-          (msg) => !window.location.pathname.includes(msg.senderId)
+        const keysArr = Object.keys(prev).filter(
+          (key) => !window.location.pathname.includes(key)
         );
+
+        return keysArr.reduce((acc, id) => {
+          return { ...acc, [id]: prev[id] };
+        }, {});
       });
     }
   });
@@ -92,9 +103,6 @@ const SidebarChatList = (props: SidebarChatListProps) => {
       </li>
       <For each={activeChats().sort()}>
         {(friend) => {
-          const unseenMessagesCount = unseenMessages().filter((unseenMsg) => {
-            return unseenMsg.senderId === friend.id;
-          }).length;
           return (
             <li>
               <a
@@ -105,9 +113,12 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                 class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
               >
                 {friend.name}
-                <Show when={unseenMessagesCount > 0} fallback={null}>
+                <Show
+                  when={unseenMessages()[friend.id]?.length > 0}
+                  fallback={null}
+                >
                   <div class="bg-indigo-600 font-medium text-xs text-white w-4 h-4 rounded-full flex justify-center items-center">
-                    {unseenMessagesCount}
+                    {unseenMessages()[friend.id].length}
                   </div>
                 </Show>
               </a>
