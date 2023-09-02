@@ -1,0 +1,18 @@
+---
+import { getSession } from '@solid-auth/base';
+import { authOptions } from '@/server/auth';
+import Generator from '@/components/ai/Generator';
+import IndexLayout from '../../layouts/IndexLayout.astro';
+
+const session: Session = (await getSession(Astro.request, authOptions)) as any;
+if (!session) return Astro.redirect('/login');
+---
+
+<IndexLayout title="Welcome to Astro." session={session}>
+  <main class="pt-8">
+    <h1 class="font-bold text-5xl mb-8">Chat Robot</h1>
+    <Generator client:load />
+  </main>
+</IndexLayout>
+
+<style></style>
