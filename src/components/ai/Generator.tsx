@@ -31,9 +31,7 @@ export default (props: { sessionImg: string }) => {
 
     try {
       if (sessionStorage.getItem('messageList'))
-        setMessageList(
-          JSON.parse(sessionStorage.getItem('messageList')).reverse()
-        );
+        setMessageList(JSON.parse(sessionStorage.getItem('messageList')));
 
       if (sessionStorage.getItem('systemRoleSettings'))
         setCurrentSystemRoleSettings(
@@ -96,13 +94,13 @@ export default (props: { sessionImg: string }) => {
     try {
       const controller = new AbortController();
       setController(controller);
-      const requestMessageList = [...messageList().reverse()];
+      const requestMessageList = [...messageList()];
 
       const timestamp = Date.now();
       const response = await fetch('/api/ai/generate', {
         method: 'POST',
         body: JSON.stringify({
-          messages: requestMessageList,
+          messages: requestMessageList.reverse(),
           time: timestamp,
           pass: '',
           sign: await generateSignature({
