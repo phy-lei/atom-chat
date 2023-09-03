@@ -1,11 +1,4 @@
-import {
-  Index,
-  Show,
-  createEffect,
-  createSignal,
-  onCleanup,
-  onMount,
-} from 'solid-js';
+import { For, createEffect, createSignal, onCleanup, onMount } from 'solid-js';
 import { useThrottleFn } from 'solidjs-use';
 import { generateSignature } from '@/utils/ai';
 import MessageItem from './MessageItem';
@@ -79,6 +72,11 @@ export default (props: { sessionImg: string }) => {
       },
       ...prev,
     ]);
+    console.log(
+      '%c [ xxx ]',
+      'font-size:13px; background:pink; color:#bf2c9f;',
+      messageList()
+    );
     requestWithLatestMessage();
     instantToBottom();
   };
@@ -226,24 +224,24 @@ export default (props: { sessionImg: string }) => {
         {currentError() && (
           <ErrorMessageItem data={currentError()} onRetry={retryLastFetch} />
         )}
-        <Index each={messageList()}>
+        <For each={messageList()}>
           {(message, index) => (
             <MessageItem
-              role={message().role}
-              message={message().content}
+              role={message.role}
+              message={message.content}
               showRetry={() =>
-                message().role === 'assistant' &&
-                index === messageList().length - 1
+                message.role === 'assistant' &&
+                index() === messageList().length - 1
               }
               onRetry={retryLastFetch}
               sessionImg={props.sessionImg}
             />
           )}
-        </Index>
+        </For>
         {currentAssistantMessage() && (
           <MessageItem
             role="assistant"
-            message={currentAssistantMessage}
+            message={currentAssistantMessage()}
             sessionImg={props.sessionImg}
           />
         )}

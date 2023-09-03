@@ -15,7 +15,7 @@ interface Props {
   onRetry?: () => void;
 }
 
-export default ({ role, message, sessionImg, showRetry, onRetry }: Props) => {
+export default (props: Props) => {
   const [source] = createSignal('');
   const { copy, copied } = useClipboard({ source, copiedDuring: 1000 });
 
@@ -60,13 +60,10 @@ export default ({ role, message, sessionImg, showRetry, onRetry }: Props) => {
       </div>`;
     };
 
-    if (typeof message === 'function') return md.render(message());
-    else if (typeof message === 'string') return md.render(message);
-
-    return '';
+    return md.render(props.message);
   };
 
-  const isCurrentUser = createMemo(() => role === 'user');
+  const isCurrentUser = createMemo(() => props.role === 'user');
 
   return (
     <div
@@ -77,7 +74,7 @@ export default ({ role, message, sessionImg, showRetry, onRetry }: Props) => {
       <div
         class={clsx('flex flex-col space-y-2 text-base max-w-xs mx-2', {
           'order-1 items-end': isCurrentUser,
-          'order-2 items-start': role !== 'user',
+          'order-2 items-start': !isCurrentUser,
         })}
       >
         <div
@@ -91,19 +88,20 @@ export default ({ role, message, sessionImg, showRetry, onRetry }: Props) => {
       <div
         class={clsx('relative w-6 h-6', {
           'order-2': isCurrentUser,
-          'order-1': role !== 'user',
+          'order-1': !isCurrentUser,
         })}
       >
         <img
-          src={isCurrentUser ? (sessionImg as string) : '/robot.svg'}
+          src={isCurrentUser ? (props.sessionImg as string) : '/robot.svg'}
           alt="Profile picture"
           class="rounded-full"
         />
       </div>
-      {showRetry?.() && onRetry && (
+      {props.showRetry?.() && props.onRetry && (
         <div class="fie px-3 mb-2">
-          <div onClick={onRetry} class="gpt-retry-btn">
+          <div onClick={props.onRetry} class="gpt-retry-btn">
             {/* <IconRefresh /> */}
+            retry
           </div>
         </div>
       )}
