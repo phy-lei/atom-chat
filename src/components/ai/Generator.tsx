@@ -10,9 +10,10 @@ import { useThrottleFn } from 'solidjs-use';
 import { generateSignature } from '@/utils/ai';
 import MessageItem from './MessageItem';
 import ErrorMessageItem from './ErrorMessageItem';
+import Button from '../ui/Button';
 import type { ChatMessage, ErrorMessage } from '@/types/aiChat';
 
-export default () => {
+export default (props: { sessionImg: string }) => {
   let inputRef: HTMLTextAreaElement;
   const [currentSystemRoleSettings, setCurrentSystemRoleSettings] =
     createSignal('');
@@ -38,7 +39,9 @@ export default () => {
 
     try {
       if (sessionStorage.getItem('messageList'))
-        setMessageList(JSON.parse(sessionStorage.getItem('messageList')));
+        setMessageList(
+          JSON.parse(sessionStorage.getItem('messageList')).reverse()
+        );
 
       if (sessionStorage.getItem('systemRoleSettings'))
         setCurrentSystemRoleSettings(
@@ -69,12 +72,12 @@ export default () => {
     if (!inputValue) return;
 
     inputRef.value = '';
-    setMessageList([
-      ...messageList(),
+    setMessageList((prev) => [
       {
         role: 'user',
         content: inputValue,
       },
+      ...prev,
     ]);
     requestWithLatestMessage();
     instantToBottom();
@@ -163,12 +166,12 @@ export default () => {
 
   const archiveCurrentMessage = () => {
     if (currentAssistantMessage()) {
-      setMessageList([
-        ...messageList(),
+      setMessageList((prev) => [
         {
           role: 'assistant',
           content: currentAssistantMessage(),
         },
+        ...prev,
       ]);
       setCurrentAssistantMessage('');
       setLoading(false);
@@ -218,61 +221,55 @@ export default () => {
   };
 
   return (
-    <div my-6>
-      <Index each={messageList()}>
-        {(message, index) => (
+    <>
+      <div class="flex h-full flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+        {currentError() && (
+          <ErrorMessageItem data={currentError()} onRetry={retryLastFetch} />
+        )}
+        <Index each={messageList()}>
+          {(message, index) => (
+            <MessageItem
+              role={message().role}
+              message={message().content}
+              showRetry={() =>
+                message().role === 'assistant' &&
+                index === messageList().length - 1
+              }
+              onRetry={retryLastFetch}
+              sessionImg={props.sessionImg}
+            />
+          )}
+        </Index>
+        {currentAssistantMessage() && (
           <MessageItem
-            role={message().role}
-            message={message().content}
-            showRetry={() =>
-              message().role === 'assistant' &&
-              index === messageList().length - 1
-            }
-            onRetry={retryLastFetch}
+            role="assistant"
+            message={currentAssistantMessage}
+            sessionImg={props.sessionImg}
           />
         )}
-      </Index>
-      {currentAssistantMessage() && (
-        <MessageItem role="assistant" message={currentAssistantMessage} />
-      )}
-      {currentError() && (
-        <ErrorMessageItem data={currentError()} onRetry={retryLastFetch} />
-      )}
-      <Show
-        when={!loading()}
-        fallback={
-          <div class="gen-cb-wrapper">
-            <span>酝酿中...</span>
-            <div class="gen-cb-stop" onClick={stopStreamFetch}>
-              停
-            </div>
-          </div>
-        }
-      >
-        <div class="gen-text-wrapper" class:op-50={systemRoleEditing()}>
+      </div>
+
+      <div class="border-t border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
+        <div class="relative flex flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
           <textarea
             ref={inputRef!}
-            disabled={systemRoleEditing()}
             onKeyDown={handleKeydown}
-            placeholder="准备好了吗，朋友..."
-            autocomplete="off"
+            rows={1}
+            disabled={loading()}
+            placeholder="Ask me about anything you want"
+            class="gen-textarea min-h-22 max-h-22"
             autofocus
-            onInput={() => {
-              inputRef.style.height = 'auto';
-              inputRef.style.height = `${inputRef.scrollHeight}px`;
-            }}
-            rows="1"
-            class="gen-textarea"
-          />
-          <button onClick={handleButtonClick} gen-slate-btn>
-            怼
-          </button>
-          <button title="Clear" onClick={clear} gen-slate-btn>
-            {/* <IconClear /> */}
-            clear
-          </button>
+          ></textarea>
+
+          <div class="flex bg-(slate op-15) pr-2 pt-6">
+            <div class="flex-shrin-0">
+              <Button isLoading={loading()} onClick={handleButtonClick}>
+                Post
+              </Button>
+            </div>
+          </div>
         </div>
-      </Show>
-    </div>
+      </div>
+    </>
   );
 };

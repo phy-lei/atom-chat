@@ -1,4 +1,5 @@
-import { createSignal } from 'solid-js';
+import { createSignal, createMemo } from 'solid-js';
+import { clsx } from 'clsx';
 import MarkdownIt from 'markdown-it';
 import mdKatex from 'markdown-it-katex';
 import mdHighlight from 'markdown-it-highlightjs';
@@ -9,16 +10,12 @@ import type { ChatMessage } from '@/types/aiChat';
 interface Props {
   role: ChatMessage['role'];
   message: Accessor<string> | string;
+  sessionImg: string;
   showRetry?: Accessor<boolean>;
   onRetry?: () => void;
 }
 
-export default ({ role, message, showRetry, onRetry }: Props) => {
-  const roleClass = {
-    system: 'bg-gradient-to-r from-gray-300 via-gray-200 to-gray-300',
-    user: 'bg-gradient-to-r from-purple-400 to-yellow-400',
-    assistant: 'bg-gradient-to-r from-yellow-200 via-green-200 to-green-300',
-  };
+export default ({ role, message, sessionImg, showRetry, onRetry }: Props) => {
   const [source] = createSignal('');
   const { copy, copied } = useClipboard({ source, copiedDuring: 1000 });
 
@@ -69,15 +66,38 @@ export default ({ role, message, showRetry, onRetry }: Props) => {
     return '';
   };
 
+  const isCurrentUser = createMemo(() => role === 'user');
+
   return (
-    <div class="py-2 -mx-4 px-4 transition-colors md:hover:bg-slate/3">
-      <div class="flex gap-3 rounded-lg" class:op-75={role === 'user'}>
+    <div
+      class={clsx('transition-colors md:hover:bg-slate/3 flex items-end', {
+        'justify-end': isCurrentUser,
+      })}
+    >
+      <div
+        class={clsx('flex flex-col space-y-2 text-base max-w-xs mx-2', {
+          'order-1 items-end': isCurrentUser,
+          'order-2 items-start': role !== 'user',
+        })}
+      >
         <div
-          class={`shrink-0 w-7 h-7 mt-4 rounded-full op-80 ${roleClass[role]}`}
-        />
-        <div
-          class="message prose break-words overflow-hidden"
+          class={clsx('px-4 py-2 rounded-lg inline-block', {
+            'bg-indigo-600 text-white': isCurrentUser,
+            'bg-gray-200 text-gray-900': !isCurrentUser,
+          })}
           innerHTML={htmlString()}
+        />
+      </div>
+      <div
+        class={clsx('relative w-6 h-6', {
+          'order-2': isCurrentUser,
+          'order-1': role !== 'user',
+        })}
+      >
+        <img
+          src={isCurrentUser ? (sessionImg as string) : '/robot.svg'}
+          alt="Profile picture"
+          class="rounded-full"
         />
       </div>
       {showRetry?.() && onRetry && (

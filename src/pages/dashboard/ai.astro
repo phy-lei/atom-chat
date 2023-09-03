@@ -9,10 +9,30 @@ if (!session) return Astro.redirect('/login');
 ---
 
 <IndexLayout title="Welcome to Astro." session={session}>
-  <main class="pt-8">
-    <h1 class="font-bold text-5xl mb-8">Chat Robot</h1>
-    <Generator client:load />
-  </main>
+  <div
+    class="flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]"
+  >
+    <div
+      class="flex sm:items-center justify-between py-3 border-b-2 border-gray-200"
+    >
+      <div class="relative flex items-center space-x-4">
+        <div class="relative">
+          <div class="relative w-8 sm:w-12 h-8 sm:h-12">
+            <img class="rounded-full" src="/robot.svg" />
+          </div>
+        </div>
+
+        <div class="flex flex-col leading-tight ml-2">
+          <div class="text-xl flex items-center">
+            <span class="text-gray-700 mr-3 font-semibold"> Chat Robot</span>
+          </div>
+
+          <span class="text-sm text-gray-600">Rayone</span>
+        </div>
+      </div>
+    </div>
+    <Generator sessionImg={session.user.image} client:load />
+  </div>
 </IndexLayout>
 
 <style></style>
