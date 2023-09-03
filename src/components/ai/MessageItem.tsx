@@ -1,4 +1,4 @@
-import { createSignal, createMemo } from 'solid-js';
+import { createSignal, createMemo, Show } from 'solid-js';
 import { clsx } from 'clsx';
 import MarkdownIt from 'markdown-it';
 import mdKatex from 'markdown-it-katex';
@@ -68,43 +68,42 @@ export default (props: Props) => {
   return (
     <div
       class={clsx('transition-colors md:hover:bg-slate/3 flex items-end', {
-        'justify-end': isCurrentUser,
+        'justify-end': isCurrentUser(),
       })}
     >
       <div
         class={clsx('flex flex-col space-y-2 text-base max-w-xs mx-2', {
-          'order-1 items-end': isCurrentUser,
-          'order-2 items-start': !isCurrentUser,
+          'order-1 items-end': isCurrentUser(),
+          'order-2 items-start': !isCurrentUser(),
         })}
       >
+        <Show when={props.showRetry?.() && props.onRetry} fallback={null}>
+          <div>
+            <div onClick={props.onRetry} class="gpt-retry-btn">
+              retry
+            </div>
+          </div>
+        </Show>
         <div
           class={clsx('px-4 py-2 rounded-lg inline-block', {
-            'bg-indigo-600 text-white': isCurrentUser,
-            'bg-gray-200 text-gray-900': !isCurrentUser,
+            'bg-indigo-600 text-white': isCurrentUser(),
+            'bg-gray-200 text-gray-900': !isCurrentUser(),
           })}
           innerHTML={htmlString()}
         />
       </div>
       <div
         class={clsx('relative w-6 h-6', {
-          'order-2': isCurrentUser,
-          'order-1': !isCurrentUser,
+          'order-2': isCurrentUser(),
+          'order-1': !isCurrentUser(),
         })}
       >
         <img
-          src={isCurrentUser ? (props.sessionImg as string) : '/robot.svg'}
+          src={isCurrentUser() ? (props.sessionImg as string) : '/robot.svg'}
           alt="Profile picture"
           class="rounded-full"
         />
       </div>
-      {props.showRetry?.() && props.onRetry && (
-        <div class="fie px-3 mb-2">
-          <div onClick={props.onRetry} class="gpt-retry-btn">
-            {/* <IconRefresh /> */}
-            retry
-          </div>
-        </div>
-      )}
     </div>
   );
 };

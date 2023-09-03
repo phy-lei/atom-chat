@@ -10,7 +10,6 @@ export default (props: { sessionImg: string }) => {
   let inputRef: HTMLTextAreaElement;
   const [currentSystemRoleSettings, setCurrentSystemRoleSettings] =
     createSignal('');
-  const [systemRoleEditing, setSystemRoleEditing] = createSignal(false);
   const [messageList, setMessageList] = createSignal<ChatMessage[]>([]);
   const [currentError, setCurrentError] = createSignal<ErrorMessage>();
   const [currentAssistantMessage, setCurrentAssistantMessage] =
@@ -98,24 +97,18 @@ export default (props: { sessionImg: string }) => {
     setLoading(true);
     setCurrentAssistantMessage('');
     setCurrentError(null);
-    const storagePassword = localStorage.getItem('pass');
     try {
       const controller = new AbortController();
       setController(controller);
       const requestMessageList = [...messageList()];
-      if (currentSystemRoleSettings()) {
-        requestMessageList.unshift({
-          role: 'system',
-          content: currentSystemRoleSettings(),
-        });
-      }
+
       const timestamp = Date.now();
       const response = await fetch('/api/ai/generate', {
         method: 'POST',
         body: JSON.stringify({
           messages: requestMessageList,
           time: timestamp,
-          pass: storagePassword,
+          pass: '',
           sign: await generateSignature({
             t: timestamp,
             m:
@@ -164,13 +157,23 @@ export default (props: { sessionImg: string }) => {
 
   const archiveCurrentMessage = () => {
     if (currentAssistantMessage()) {
-      setMessageList((prev) => [
+      console.log(
+        '%c [ currentAssistantMessage ]',
+        'font-size:13px; background:pink; color:#bf2c9f;',
+        messageList()
+      );
+      setMessageList([
         {
           role: 'assistant',
           content: currentAssistantMessage(),
         },
-        ...prev,
+        ...messageList(),
       ]);
+      console.log(
+        '%c [ after ]',
+        'font-size:13px; background:pink; color:#bf2c9f;',
+        messageList()
+      );
       setCurrentAssistantMessage('');
       setLoading(false);
       setController(null);
