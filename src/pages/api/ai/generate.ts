@@ -4,6 +4,8 @@ import { ProxyAgent, fetch } from 'undici'
 import { generatePayload, parseOpenAIStream } from '@/utils/openAI'
 import { verifySignature } from '@/utils/ai'
 import type { APIRoute } from 'astro'
+import { getSession } from '@solid-auth/base'
+import { authOptions } from '@/server/auth'
 
 const apiKey = import.meta.env.OPENAI_API_KEY
 const httpsProxy = import.meta.env.HTTPS_PROXY
@@ -14,6 +16,13 @@ const passList = sitePassword.split(',') || []
 export const post: APIRoute = async (context) => {
   const body = await context.request.json()
   const { sign, time, messages, pass } = body
+
+  const session: Session = (await getSession(context.request, authOptions)) as any
+
+  if (!session) return new Response(JSON.stringify({
+    message: 'Unauthorized',
+  }), { status: 401 })
+
   if (!messages) {
     return new Response(JSON.stringify({
       error: {
@@ -55,3 +64,4 @@ export const post: APIRoute = async (context) => {
 
   return parseOpenAIStream(response) as Response
 }
+
