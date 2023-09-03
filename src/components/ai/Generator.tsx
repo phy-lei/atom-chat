@@ -71,11 +71,7 @@ export default (props: { sessionImg: string }) => {
       },
       ...prev,
     ]);
-    console.log(
-      '%c [ xxx ]',
-      'font-size:13px; background:pink; color:#bf2c9f;',
-      messageList()
-    );
+
     requestWithLatestMessage();
     instantToBottom();
   };
@@ -100,7 +96,7 @@ export default (props: { sessionImg: string }) => {
     try {
       const controller = new AbortController();
       setController(controller);
-      const requestMessageList = [...messageList()];
+      const requestMessageList = [...messageList().reverse()];
 
       const timestamp = Date.now();
       const response = await fetch('/api/ai/generate', {
@@ -157,11 +153,6 @@ export default (props: { sessionImg: string }) => {
 
   const archiveCurrentMessage = () => {
     if (currentAssistantMessage()) {
-      console.log(
-        '%c [ currentAssistantMessage ]',
-        'font-size:13px; background:pink; color:#bf2c9f;',
-        messageList()
-      );
       setMessageList([
         {
           role: 'assistant',
@@ -169,11 +160,6 @@ export default (props: { sessionImg: string }) => {
         },
         ...messageList(),
       ]);
-      console.log(
-        '%c [ after ]',
-        'font-size:13px; background:pink; color:#bf2c9f;',
-        messageList()
-      );
       setCurrentAssistantMessage('');
       setLoading(false);
       setController(null);
