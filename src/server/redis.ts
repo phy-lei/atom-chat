@@ -41,3 +41,23 @@ export async function getFriendsByUserId(userId: string) {
 
   return friends
 }
+
+export async function isAlreadyFriendByOwnerEmail(currentId: string) {
+  const ownerEmail = import.meta.env.OWNER_EMAIL
+  if (!ownerEmail) return 0
+
+  const targetId = (await fetchRedis(
+    'get',
+    `user:email:${ownerEmail}`,
+  )) as string
+
+  if (currentId === targetId) return 1
+
+  const isAlreadyFriends = (await fetchRedis(
+    'sismember',
+    `user:${currentId}:friends`,
+    targetId,
+  )) as 0 | 1
+
+  return isAlreadyFriends
+}

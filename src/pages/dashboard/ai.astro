@@ -3,9 +3,14 @@ import { getSession } from '@solid-auth/base';
 import { authOptions } from '@/server/auth';
 import Generator from '@/components/ai/Generator';
 import IndexLayout from '../../layouts/IndexLayout.astro';
+import { isAlreadyFriendByOwnerEmail } from '@/server/redis';
 
 const session: Session = (await getSession(Astro.request, authOptions)) as any;
 if (!session) return Astro.redirect('/login');
+
+const authFriend = await isAlreadyFriendByOwnerEmail(session.user.id);
+
+if (!authFriend) return Astro.redirect('/404');
 ---
 
 <IndexLayout title="Welcome to Astro." session={session}>

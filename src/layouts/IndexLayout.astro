@@ -2,17 +2,21 @@
 import { Toaster } from 'solid-toast';
 import FriendRequestSidebarOptions from '@/components/FriendRequestSidebarOptions';
 import SignOutButton from '@/components/SignOutButton';
-import { getFriendsByUserId, fetchRedis } from '@/server/redis';
-import { chatHrefConstructor } from '@/utils';
+import {
+  getFriendsByUserId,
+  fetchRedis,
+  isAlreadyFriendByOwnerEmail,
+} from '@/server/redis';
 import SidebarChatList from '@/components/SidebarChatList';
 
 interface Props {
   title: string;
   session: Session;
   _friends?: User[];
+  authFriend?: boolean;
 }
 
-const { title, session, _friends } = Astro.props;
+const { title, session, _friends, authFriend } = Astro.props;
 
 const sidebarOptions = [
   {
@@ -30,6 +34,11 @@ const unseenRequestCount = (
     `user:${session.user.id}:incoming_friend_requests`
   )) as User[]
 ).length;
+
+const aiPage =
+  authFriend === undefined
+    ? await isAlreadyFriendByOwnerEmail(session.user.id)
+    : authFriend;
 ---
 
 <!DOCTYPE html>
@@ -65,6 +74,7 @@ const unseenRequestCount = (
                 client:load
                 sessionId={session.user.id}
                 friends={friends}
+                aiPage={aiPage}
               />
             </li>
             <li>

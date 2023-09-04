@@ -14,6 +14,7 @@ import UnseenChatToast from './UnseenChatToast';
 interface SidebarChatListProps {
   friends: User[];
   sessionId: string;
+  aiPage?: boolean;
 }
 
 interface ExtendedMessage extends Message {
@@ -93,14 +94,17 @@ const SidebarChatList = (props: SidebarChatListProps) => {
 
   return (
     <ul role="list" class="max-h-[25rem] overflow-y-auto -mx-2 space-y-1">
-      <li>
-        <a
-          href={`/dashboard/ai`}
-          class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-        >
-          Rayone
-        </a>
-      </li>
+      <Show when={props.aiPage} fallback={null}>
+        <li>
+          <a
+            href={`/dashboard/ai`}
+            class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+          >
+            Rayone
+          </a>
+        </li>
+      </Show>
+
       <For each={activeChats().sort()}>
         {(friend) => {
           return (
