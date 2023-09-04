@@ -1,11 +1,18 @@
 import { createSignal, Switch, Match, JSX } from 'solid-js';
+import { useClipboard } from 'solidjs-use';
+import toast from 'solid-toast';
 import Button from './ui/Button';
+
 enum MessageTypes {
   error = 'error',
   success = 'success',
   null = '',
 }
+
+const ownerEmail = import.meta.env.PUBLIC_OWNER_EMAIL;
+
 const AddFriendButton = (props) => {
+  const { copy, copied } = useClipboard();
   const [value, setValue] = createSignal('');
   const [loading, setLoading] = createSignal(false);
   const [message, setMessage] = createSignal({
@@ -61,6 +68,11 @@ const AddFriendButton = (props) => {
     }
   };
 
+  const handleCopy = () => {
+    copy(ownerEmail);
+    toast.success('email has been copied done');
+  };
+
   return (
     <div class="max-w-sm">
       <label
@@ -73,7 +85,7 @@ const AddFriendButton = (props) => {
       <div class="mt-2 flex gap-4">
         <input
           type="text"
-          class="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          class="block flex-1 rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           placeholder="you@example.com"
           onInput={handleInput}
         />
@@ -81,6 +93,7 @@ const AddFriendButton = (props) => {
           {loading() ? null : <i class="i-carbon:add mr-2 w-4 h-4"></i>}
           Add
         </Button>
+        <Button onClick={handleCopy}>Copy author email</Button>
       </div>
       <Switch fallback={null}>
         <Match when={message().type === MessageTypes.success}>
