@@ -22,11 +22,14 @@ interface ExtendedMessage extends Message {
   senderName: string;
 }
 
+const ownerEmail = import.meta.env.PUBLIC_OWNER_EMAIL;
+
 const SidebarChatList = (props: SidebarChatListProps) => {
   const [unseenMessages, setUnseenMessages] = createSignal<
     Record<string, Message[]>
   >({});
   const [activeChats, setActiveChats] = createSignal<User[]>(props.friends);
+  const [activeAiPage, setActiveAiPage] = createSignal(false);
 
   onMount(() => {
     pusherClient.subscribe(toPusherKey(`user:${props.sessionId}:chats`));
@@ -34,6 +37,9 @@ const SidebarChatList = (props: SidebarChatListProps) => {
 
     const newFriendHandler = (newFriend: User) => {
       setActiveChats((prev) => [...prev, newFriend]);
+      if (newFriend.email === ownerEmail) {
+        setActiveAiPage(true);
+      }
     };
 
     const chatHandler = (message: ExtendedMessage) => {
@@ -94,7 +100,7 @@ const SidebarChatList = (props: SidebarChatListProps) => {
 
   return (
     <ul role="list" class="max-h-[25rem] overflow-y-auto -mx-2 space-y-1">
-      <Show when={props.aiPage} fallback={null}>
+      <Show when={props.aiPage || activeAiPage()} fallback={null}>
         <li>
           <a
             href={`/dashboard/ai`}

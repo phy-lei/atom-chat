@@ -8,6 +8,7 @@ import {
   isAlreadyFriendByOwnerEmail,
 } from '@/server/redis';
 import SidebarChatList from '@/components/SidebarChatList';
+import Button from '@/components/ui/Button';
 
 interface Props {
   title: string;
@@ -53,12 +54,33 @@ const aiPage =
   </head>
   <body>
     <div class="w-full flex h-screen">
+      <div class="sm:hidden">
+        <div
+          class="fixed bg-zinc-50 border-b border-zinc-200 top-0 inset-x-0 py-2 px-4"
+        >
+          <div class="w-full flex justify-between items-center">
+            <a href="/dashboard" class="flex h-16 shrink-0 items-center">
+              <i class="i-bx:bxs-paper-plane h-8 w-8 text-indigo-600"></i>
+            </a>
+            <Button class="gap-1" id="menuBtn">
+              Menu <i class="i-carbon:menu"></i>
+            </Button>
+          </div>
+        </div>
+      </div>
       <div
-        class="hidden md:flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6"
+        class="flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 transition-all sidebar-fixed"
+        id="sideBar"
       >
-        <a href="/dashboard" class="flex h-16 shrink-0 items-center">
-          <i class="i-bx:bxs-paper-plane h-8 w-8 text-indigo-600"></i>
-        </a>
+        <div class="flex shrink-0 items-center justify-between">
+          <a href="/dashboard" class="flex h-16 shrink-0 items-center">
+            <i class="i-bx:bxs-paper-plane h-8 w-8 text-indigo-600"></i>
+          </a>
+          <i
+            id="close-btn"
+            class="i-carbon:close-large cursor-pointer hidden <sm:block"></i>
+        </div>
+
         {
           friends.length > 0 ? (
             <div class="text-xs font-semibold leading-6 text-gray-400">
@@ -111,9 +133,9 @@ const aiPage =
               </ul>
             </li>
 
-            <li class="-mx-6 mt-auto flex items-center">
+            <li class="mt-auto flex items-center justify-between max-w-full">
               <div
-                class="flex flex-1 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900"
+                class="flex flex-1 items-center gap-x-4 py-3 text-sm font-semibold leading-6 text-gray-900"
               >
                 <div class="relative h-8 w-8 bg-gray-50">
                   <img
@@ -165,4 +187,33 @@ const aiPage =
     font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
       DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
   }
+
+  .sider_bar__fixed__open {
+    transform: translateX(0%) !important;
+  }
+  @media (max-width: 639px) {
+    .sidebar-fixed {
+      position: fixed;
+      left: 0;
+      top: 0;
+      transform: translateX(-100%);
+    }
+  }
 </style>
+
+<script>
+  const menuBtn = document.getElementById('menuBtn');
+  const sideBar = document.getElementById('sideBar');
+  const closeBtn = document.getElementById('close-btn');
+  const OPEN_SIDEBAR_CLASSNAME = 'sider_bar__fixed__open';
+
+  menuBtn.addEventListener('click', () => {
+    sideBar.classList.add(OPEN_SIDEBAR_CLASSNAME);
+  });
+
+  function closeHandler() {
+    sideBar.classList.remove(OPEN_SIDEBAR_CLASSNAME);
+  }
+
+  closeBtn.addEventListener('click', closeHandler);
+</script>

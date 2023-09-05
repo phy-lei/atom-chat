@@ -12,7 +12,7 @@ enum MessageTypes {
 const ownerEmail = import.meta.env.PUBLIC_OWNER_EMAIL;
 
 const AddFriendButton = (props) => {
-  const { copy, copied } = useClipboard();
+  const { copy } = useClipboard();
   const [value, setValue] = createSignal('');
   const [loading, setLoading] = createSignal(false);
   const [message, setMessage] = createSignal({
@@ -74,7 +74,7 @@ const AddFriendButton = (props) => {
   };
 
   return (
-    <div class="max-w-sm">
+    <div class="max-w-md">
       <label
         html-for="email"
         class="block text-sm font-medium leading-6 text-gray-900"
@@ -82,7 +82,7 @@ const AddFriendButton = (props) => {
         Add friend by E-Mail
       </label>
 
-      <div class="mt-2 flex gap-4">
+      <div class="mt-2 flex gap-4 xs-flex-col sm-flex-row">
         <input
           type="text"
           class="block flex-1 rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -90,8 +90,7 @@ const AddFriendButton = (props) => {
           onInput={handleInput}
         />
         <Button onClick={handleSubmit} isLoading={loading()}>
-          {loading() ? null : <i class="i-carbon:add mr-2 w-4 h-4"></i>}
-          Add
+          {loading() ? null : 'Add'}
         </Button>
         <Button onClick={handleCopy}>Copy author email</Button>
       </div>
