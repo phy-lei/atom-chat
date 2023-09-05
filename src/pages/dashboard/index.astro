@@ -19,8 +19,9 @@ const friendsWithLastMessage = await Promise.all(
       -1
     )) as string[];
 
-    const lastMessage = JSON.parse(lastMessageRaw) as Message;
-
+    const lastMessage = lastMessageRaw
+      ? (JSON.parse(lastMessageRaw) as Message)
+      : ({} as Message);
     return {
       ...friend,
       lastMessage,
