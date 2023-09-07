@@ -4,6 +4,7 @@ import UnoCSS from 'unocss/astro';
 import vercel from '@astrojs/vercel/edge';
 import netlify from '@astrojs/netlify/functions';
 import node from '@astrojs/node';
+import prefetch from '@astrojs/prefetch';
 
 const envAdapter = () => {
   switch (process.env.OUTPUT) {
@@ -17,7 +18,13 @@ const envAdapter = () => {
 };
 
 export default defineConfig({
-  integrations: [UnoCSS({ injectReset: true }), solidJs()],
+  integrations: [
+    UnoCSS({ injectReset: true }),
+    solidJs(),
+    prefetch({
+      throttle: 3,
+    }),
+  ],
   output: 'server',
   adapter: envAdapter(),
 });

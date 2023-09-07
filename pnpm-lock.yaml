@@ -11,6 +11,9 @@ dependencies:
   '@astrojs/node':
     specifier: ^5.3.5
     version: 5.3.5(astro@2.10.12)
+  '@astrojs/prefetch':
+    specifier: ^0.4.0
+    version: 0.4.0
   '@astrojs/solid-js':
     specifier: ^2.2.1
     version: 2.2.1(@babel/core@7.22.10)(solid-js@1.7.11)(vite@4.4.9)
@@ -203,6 +206,12 @@ packages:
       server-destroy: 1.0.1
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@astrojs/prefetch@0.4.0:
+    resolution: {integrity: sha512-TTlVJcBrVv2R10Owsbl4tizvcRV+MuQsh4ZwIn2hU3XvzvaacIw4/2bzQ3WcYwQhc3t72t6E1vLdvtnXo0xyEA==}
+    dependencies:
+      throttles: 1.0.1
     dev: false
 
   /@astrojs/prism@2.1.2:
@@ -8054,6 +8063,11 @@ packages:
   /text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
     dev: true
+
+  /throttles@1.0.1:
+    resolution: {integrity: sha512-fab7Xg+zELr9KOv4fkaBoe/b3L0GMGLd0IBSCn16GoE/Qx6/OfCr1eGNyEcDU2pUA79qQfZ8kPQWlRuok4YwTw==}
+    engines: {node: '>=6'}
+    dev: false
 
   /titleize@3.0.0:
     resolution: {integrity: sha512-KxVu8EYHDPBdUYdKZdKtU2aj2XfEx9AfjXxE/Aj0vT06w2icA09Vus1rh6eSu1y01akYg6BjIK/hxyLJINoMLQ==}
