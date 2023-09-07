@@ -52,12 +52,18 @@ const Messages = (props: MessagesProps) => {
       });
     };
 
+    const scrollToBottom = () => {
+      setY(scrollEl().scrollHeight);
+    };
+
     pusherClient.bind('incoming-message', messageHandler);
     pusherClient.bind('delete-message', delMessageHandler);
+    window.addEventListener('scrollToBottom', scrollToBottom);
 
     onCleanup(() => {
       pusherClient.unsubscribe(toPusherKey(`chat:${props.chatId}`));
       pusherClient.unbind('incoming-message', messageHandler);
+      window.removeEventListener('scrollToBottom', scrollToBottom);
     });
   });
 
