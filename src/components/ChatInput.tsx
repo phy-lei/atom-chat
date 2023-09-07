@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js';
+import { createSignal, onMount } from 'solid-js';
 import toast from 'solid-toast';
 import Button from './ui/Button';
 
@@ -78,6 +78,12 @@ const ChatInput = (props: ChatInputProps) => {
     window.dispatchEvent(event);
   };
 
+  onMount(() => {
+    window.addEventListener('KeyBoardUp', () => {
+      toast.success('123123');
+    });
+  });
+
   return (
     <div class="border-t border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
       <div class="relative flex flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
@@ -94,7 +100,6 @@ const ChatInput = (props: ChatInputProps) => {
           disabled={isLoading()}
           value={input()}
           onInput={(e) => setInput(e.target.value)}
-          onFocus={scrollToBottom}
           placeholder={`Message ${props.chatPartner.name}`}
           class="gen-textarea min-h-22 max-h-22"
           autofocus
