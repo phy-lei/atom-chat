@@ -1,4 +1,4 @@
-import { createSignal, onMount } from 'solid-js';
+import { createSignal, onMount, onCleanup } from 'solid-js';
 import toast from 'solid-toast';
 import Button from './ui/Button';
 
@@ -79,8 +79,22 @@ const ChatInput = (props: ChatInputProps) => {
   };
 
   onMount(() => {
-    window.addEventListener('KeyBoardUp', () => {
-      toast.success('123123');
+    let originHeight =
+      document.documentElement.clientHeight || document.body.clientHeight;
+
+    const resizeHandler = () => {
+      const resizeHeight =
+        document.documentElement.clientHeight || document.body.clientHeight;
+      if (originHeight > resizeHeight) {
+        scrollToBottom();
+      }
+      originHeight = resizeHeight;
+    };
+
+    window.addEventListener('resize', resizeHandler);
+
+    onCleanup(() => {
+      window.removeEventListener('resize', resizeHandler);
     });
   });
 
