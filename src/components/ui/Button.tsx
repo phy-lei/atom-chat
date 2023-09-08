@@ -1,4 +1,4 @@
-import { Component, JSX, Accessor } from 'solid-js';
+import { Component, JSX } from 'solid-js';
 import { cva, VariantProps } from 'class-variance-authority';
 
 const buttonVariants = cva(

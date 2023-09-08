@@ -2,6 +2,7 @@ import { Show, For } from 'solid-js';
 import { clsx } from 'clsx';
 import toast from 'solid-toast';
 import { format } from 'date-fns';
+import ImgViewer from './ui/ImgViewer';
 
 interface ChatBubblesProps {
   isCurrentUser: boolean;
@@ -88,7 +89,7 @@ const ChatBubble = (props: ChatBubblesProps) => {
 
   return (
     <div
-      class={clsx('flex flex-col space-y-2 text-base max-w-xs mx-2', {
+      class={clsx('flex flex-col text-base max-w-xs mx-2', {
         'order-1 items-end': props.isCurrentUser,
         'order-2 items-start': !props.isCurrentUser,
       })}
@@ -101,7 +102,13 @@ const ChatBubble = (props: ChatBubblesProps) => {
       </Show>
       <Show
         when={!isImage()}
-        fallback={<img src={props.message.text} alt="picture" />}
+        fallback={
+          <ImgViewer
+            src={props.message.text}
+            alt="picture"
+            class="cursor-zoom-in"
+          ></ImgViewer>
+        }
       >
         <span
           class={clsx('px-4 py-2 rounded-lg inline-block', {
