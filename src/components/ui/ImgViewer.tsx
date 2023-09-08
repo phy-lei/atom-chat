@@ -4,7 +4,7 @@ interface ImgViewerProps extends JSX.ImgHTMLAttributes<HTMLImageElement> {}
 
 const ImgViewer: Component<ImgViewerProps> = (props) => {
   const [show, setShow] = createSignal(false);
-
+  // TODO: 改为像Toast一样的方式
   return (
     <>
       <img {...props} onClick={() => setShow(true)} />
