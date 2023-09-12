@@ -12,11 +12,11 @@ const ImgViewer: Component<ImgViewerProps> = (props) => {
         <div class="fixed bg-black:[0.5] w-screen h-screen left-0 top-0 z-99 mt-0">
           <div class="absolute w-full h-full flex justify-center items-center">
             <img {...props} class="mt-20" />
-            <div class="bg-black:[0.5] rounded-50% w-80px h-80px absolute -right-40px -top-40px hover:bg-black:[0.8]">
-              <i
-                class="i-carbon:close-large absolute bottom-15px left-15px cursor-pointer"
-                onClick={() => setShow(false)}
-              ></i>
+            <div
+              class="bg-black:[0.5] rounded-50% w-80px h-80px absolute -right-40px -top-40px hover:bg-black:[0.8] cursor-pointer"
+              onClick={() => setShow(false)}
+            >
+              <i class="i-carbon:close-large absolute bottom-15px left-15px  bg-white"></i>
             </div>
           </div>
         </div>
