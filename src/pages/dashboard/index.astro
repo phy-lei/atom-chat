@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import { getSession } from '@solid-auth/base';
 import { authOptions } from '@/server/auth';
 import IndexLayout from '../../layouts/IndexLayout.astro';
@@ -52,12 +51,10 @@ const friendsWithLastMessage = await Promise.all(
             >
               <div class="mb-4 flex-shrink-0 sm:mb-0 sm:mr-4">
                 <div class="relative h-6 w-6">
-                  <Image
+                  <img
                     class="rounded-full"
                     src={friend.image}
                     alt={`${friend.name} profile picture`}
-                    width="50"
-                    height="50"
                   />
                 </div>
               </div>

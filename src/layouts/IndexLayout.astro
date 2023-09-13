@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import { ViewTransitions } from 'astro:transitions';
 import { Toaster } from 'solid-toast';
 import FriendRequestSidebarOptions from '@/components/FriendRequestSidebarOptions';
@@ -137,12 +136,10 @@ const aiPage =
                 class="flex flex-1 items-center gap-x-4 py-3 text-sm font-semibold leading-6 text-gray-900"
               >
                 <div class="relative h-8 w-8 bg-gray-50">
-                  <Image
+                  <img
                     class="rounded-full w-8 h-8"
                     src={session.user.image || ''}
                     alt="Your profile picture"
-                    width="50"
-                    height="50"
                   />
                 </div>
 

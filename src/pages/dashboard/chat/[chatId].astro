@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import { getSession } from '@solid-auth/base';
 import { authOptions } from '@/server/auth';
 import IndexLayout from '@/layouts/IndexLayout.astro';
@@ -43,12 +42,10 @@ const initialMessages = results
       <div class="relative flex items-center space-x-4">
         <div class="relative">
           <div class="relative w-8 sm:w-12 h-8 sm:h-12">
-            <Image
+            <img
               class="rounded-full"
               src={chatPartner?.image}
               alt={`${chatPartner?.name} profile picture`}
-              width="50"
-              height="50"
             />
           </div>
         </div>
