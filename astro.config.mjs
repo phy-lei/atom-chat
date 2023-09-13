@@ -28,6 +28,7 @@ export default defineConfig({
   output: 'server',
   adapter: envAdapter(),
   image: {
+    domains: ['astro.build'],
     remotePatterns: [
       {
         protocol: 'https',
