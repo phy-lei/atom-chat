@@ -28,6 +28,7 @@ export default defineConfig({
   output: 'server',
   adapter: envAdapter(),
   image: {
+    service: { entrypoint: 'astro/assets/services/sharp' },
     domains: ['astro.build'],
     remotePatterns: [
       {
