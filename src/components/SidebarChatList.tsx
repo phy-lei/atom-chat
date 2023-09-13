@@ -72,8 +72,24 @@ const SidebarChatList = (props: SidebarChatListProps) => {
       });
     };
 
+    const transitionChange = () => {
+      if (window.location.pathname.includes('chat')) {
+        setUnseenMessages((prev) => {
+          const keysArr = Object.keys(prev).filter(
+            (key) => !window.location.pathname.includes(key)
+          );
+
+          return keysArr.reduce((acc, id) => {
+            return { ...acc, [id]: prev[id] };
+          }, {});
+        });
+      }
+    };
+
     pusherClient.bind('new_message', chatHandler);
     pusherClient.bind('new_friend', newFriendHandler);
+    // viewTransition change event
+    document.addEventListener('astro:after-swap', transitionChange);
 
     onCleanup(() => {
       pusherClient.unsubscribe(toPusherKey(`user:${props.sessionId}:chats`));
@@ -81,21 +97,8 @@ const SidebarChatList = (props: SidebarChatListProps) => {
 
       pusherClient.unbind('new_message', chatHandler);
       pusherClient.unbind('new_friend', newFriendHandler);
+      document.removeEventListener('astro:after-swap', transitionChange);
     });
-  });
-
-  createEffect(() => {
-    if (window.location.pathname.includes('chat')) {
-      setUnseenMessages((prev) => {
-        const keysArr = Object.keys(prev).filter(
-          (key) => !window.location.pathname.includes(key)
-        );
-
-        return keysArr.reduce((acc, id) => {
-          return { ...acc, [id]: prev[id] };
-        }, {});
-      });
-    }
   });
 
   return (
