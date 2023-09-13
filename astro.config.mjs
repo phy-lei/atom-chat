@@ -1,4 +1,4 @@
-import { defineConfig, squooshImageService } from 'astro/config';
+import { defineConfig } from 'astro/config';
 import solidJs from '@astrojs/solid-js';
 import UnoCSS from 'unocss/astro';
 import vercel from '@astrojs/vercel/edge';
@@ -28,8 +28,6 @@ export default defineConfig({
   output: 'server',
   adapter: envAdapter(),
   image: {
-    service: { entrypoint: squooshImageService() },
-    domains: ['astro.build'],
     remotePatterns: [
       {
         protocol: 'https',
