@@ -27,4 +27,12 @@ export default defineConfig({
   ],
   output: 'server',
   adapter: envAdapter(),
+  image: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.githubusercontent.com',
+      },
+    ],
+  },
 });

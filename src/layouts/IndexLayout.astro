@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import { ViewTransitions } from 'astro:transitions';
 import { Toaster } from 'solid-toast';
 import FriendRequestSidebarOptions from '@/components/FriendRequestSidebarOptions';
 import SignOutButton from '@/components/SignOutButton';
@@ -51,6 +53,7 @@ const aiPage =
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <ViewTransitions />
   </head>
   <body>
     <div class="w-full flex h-screen">
@@ -85,7 +88,7 @@ const aiPage =
           Your chats
         </div>
 
-        <nav class="flex flex-1 flex-col">
+        <nav class="flex flex-1 flex-col" transition:persist>
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
               <SidebarChatList
@@ -134,10 +137,12 @@ const aiPage =
                 class="flex flex-1 items-center gap-x-4 py-3 text-sm font-semibold leading-6 text-gray-900"
               >
                 <div class="relative h-8 w-8 bg-gray-50">
-                  <img
+                  <Image
                     class="rounded-full w-8 h-8"
                     src={session.user.image || ''}
                     alt="Your profile picture"
+                    width="50"
+                    height="50"
                   />
                 </div>
 
@@ -161,56 +166,56 @@ const aiPage =
         <Toaster client:load />
       </aside>
     </div>
+    <style is:global>
+      :root {
+        --accent: 136, 58, 234;
+        --accent-light: 224, 204, 250;
+        --accent-dark: 49, 10, 101;
+        --accent-gradient: linear-gradient(
+          45deg,
+          rgb(var(--accent)),
+          rgb(var(--accent-light)) 30%,
+          white 60%
+        );
+      }
+      html {
+        font-family: system-ui, sans-serif;
+        background-size: 224px;
+      }
+      code {
+        font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
+          DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+      }
+
+      .sider_bar__fixed__open {
+        transform: translateX(0%) !important;
+      }
+      @media (max-width: 639px) {
+        .sidebar-fixed {
+          display: flex !important;
+          position: fixed;
+          left: 0;
+          top: 0;
+          transform: translateX(-100%);
+        }
+      }
+    </style>
+
+    <script>
+      const menuBtn = document.getElementById('menuBtn');
+      const sideBar = document.getElementById('sideBar');
+      const closeBtn = document.getElementById('close-btn');
+      const OPEN_SIDEBAR_CLASSNAME = 'sider_bar__fixed__open';
+
+      menuBtn.addEventListener('click', () => {
+        sideBar.classList.add(OPEN_SIDEBAR_CLASSNAME);
+      });
+
+      function closeHandler() {
+        sideBar.classList.remove(OPEN_SIDEBAR_CLASSNAME);
+      }
+
+      closeBtn.addEventListener('click', closeHandler);
+    </script>
   </body>
 </html>
-<style is:global>
-  :root {
-    --accent: 136, 58, 234;
-    --accent-light: 224, 204, 250;
-    --accent-dark: 49, 10, 101;
-    --accent-gradient: linear-gradient(
-      45deg,
-      rgb(var(--accent)),
-      rgb(var(--accent-light)) 30%,
-      white 60%
-    );
-  }
-  html {
-    font-family: system-ui, sans-serif;
-    background-size: 224px;
-  }
-  code {
-    font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-      DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-  }
-
-  .sider_bar__fixed__open {
-    transform: translateX(0%) !important;
-  }
-  @media (max-width: 639px) {
-    .sidebar-fixed {
-      display: flex !important;
-      position: fixed;
-      left: 0;
-      top: 0;
-      transform: translateX(-100%);
-    }
-  }
-</style>
-
-<script>
-  const menuBtn = document.getElementById('menuBtn');
-  const sideBar = document.getElementById('sideBar');
-  const closeBtn = document.getElementById('close-btn');
-  const OPEN_SIDEBAR_CLASSNAME = 'sider_bar__fixed__open';
-
-  menuBtn.addEventListener('click', () => {
-    sideBar.classList.add(OPEN_SIDEBAR_CLASSNAME);
-  });
-
-  function closeHandler() {
-    sideBar.classList.remove(OPEN_SIDEBAR_CLASSNAME);
-  }
-
-  closeBtn.addEventListener('click', closeHandler);
-</script>

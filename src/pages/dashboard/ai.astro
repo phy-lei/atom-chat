@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { getSession } from '@solid-auth/base';
 import { authOptions } from '@/server/auth';
 import Generator from '@/components/ai/Generator';
@@ -23,7 +24,13 @@ if (!authFriend) return Astro.redirect('/404');
       <div class="relative flex items-center space-x-4">
         <div class="relative">
           <div class="relative w-8 sm:w-12 h-8 sm:h-12">
-            <img class="rounded-full" src="/robot.svg" />
+            <Image
+              class="rounded-full"
+              src="/robot.svg"
+              alt="Robot"
+              width="50"
+              height="50"
+            />
           </div>
         </div>
 
