@@ -1,11 +1,4 @@
-import {
-  createSignal,
-  onMount,
-  onCleanup,
-  createEffect,
-  Show,
-  For,
-} from 'solid-js';
+import { createSignal, onMount, onCleanup, Show, For } from 'solid-js';
 import toast from 'solid-toast';
 import { pusherClient } from '@/server/pusherClient';
 import { toPusherKey, chatHrefConstructor } from '@/utils';
