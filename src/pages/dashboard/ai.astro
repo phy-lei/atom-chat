@@ -13,7 +13,7 @@ const authFriend = await isAlreadyFriendByOwnerEmail(session.user.id);
 if (!authFriend) return Astro.redirect('/404');
 ---
 
-<IndexLayout title="Welcome to Astro." session={session}>
+<IndexLayout title="Phy-chat | Robot" session={session}>
   <div
     class="flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]"
   >
