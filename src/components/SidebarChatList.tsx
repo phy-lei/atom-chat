@@ -100,9 +100,9 @@ const SidebarChatList = (props: SidebarChatListProps) => {
         <li>
           <a
             href={`/dashboard/ai`}
-            class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+            class="color-#FF7E33 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
           >
-            Rayone
+            Rayone🤖️
           </a>
         </li>
       </Show>
