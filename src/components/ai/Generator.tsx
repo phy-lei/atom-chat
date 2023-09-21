@@ -176,7 +176,6 @@ export default (props: { sessionImg: string }) => {
     if (controller()) {
       controller().abort();
       archiveCurrentMessage();
-      setLoading(false);
     }
   };
 
