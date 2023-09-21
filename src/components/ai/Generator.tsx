@@ -184,6 +184,7 @@ export default (props: { sessionImg: string }) => {
     if (controller()) {
       controller().abort();
       archiveCurrentMessage();
+      setLoading(false);
     }
   };
 
@@ -248,8 +249,12 @@ export default (props: { sessionImg: string }) => {
 
           <div class="flex bg-(slate op-15) pr-2 pt-6">
             <div class="flex-shrin-0">
-              <Button isLoading={loading()} onClick={handleButtonClick}>
-                Post
+              <Button
+                onClick={() => {
+                  loading() ? stopStreamFetch() : handleButtonClick();
+                }}
+              >
+                {loading() ? 'Stop' : 'Post'}
               </Button>
             </div>
           </div>
