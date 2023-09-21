@@ -1,27 +1,36 @@
 // #vercel-disable-blocks
-import { ProxyAgent, fetch } from 'undici'
+import { fetch } from 'undici'
 // #vercel-end
 import { generatePayload, parseOpenAIStream } from '@/utils/openAI'
 import { verifySignature } from '@/utils/ai'
 import type { APIRoute } from 'astro'
+import { isAlreadyFriendByOwnerEmail } from '@/server/redis';
 import { getSession } from '@solid-auth/base'
 import { authOptions } from '@/server/auth'
 
 const apiKey = import.meta.env.OPENAI_API_KEY
-const httpsProxy = import.meta.env.HTTPS_PROXY
 const baseUrl = ((import.meta.env.OPENAI_API_BASE_URL) || 'https://api.openai.com').trim().replace(/\/$/, '')
-const sitePassword = import.meta.env.SITE_PASSWORD || ''
-const passList = sitePassword.split(',') || []
 
 export const post: APIRoute = async (context) => {
   const body = await context.request.json()
-  const { sign, time, messages, pass } = body
+  const { sign, time, messages } = body
 
   const session: Session = (await getSession(context.request, authOptions)) as any
 
   if (!session) return new Response(JSON.stringify({
     message: 'Unauthorized',
   }), { status: 401 })
+
+  const authFriend = await isAlreadyFriendByOwnerEmail(session.user.id);
+
+  if (!authFriend) {
+    return new Response(JSON.stringify({
+      error: {
+        message: 'Unauthorized',
+      },
+    }), { status: 401 })
+  }
+
 
   if (!messages) {
     return new Response(JSON.stringify({
@@ -30,13 +39,7 @@ export const post: APIRoute = async (context) => {
       },
     }), { status: 400 })
   }
-  if (sitePassword && !(sitePassword === pass || passList.includes(pass))) {
-    return new Response(JSON.stringify({
-      error: {
-        message: 'Invalid password.',
-      },
-    }), { status: 401 })
-  }
+
   if (import.meta.env.PROD && !await verifySignature({ t: time, m: messages?.[messages.length - 1]?.content || '' }, sign)) {
     return new Response(JSON.stringify({
       error: {
@@ -45,10 +48,7 @@ export const post: APIRoute = async (context) => {
     }), { status: 401 })
   }
   const initOptions = generatePayload(apiKey, messages)
-  // #vercel-disable-blocks
-  if (httpsProxy)
-    initOptions.dispatcher = new ProxyAgent(httpsProxy)
-  // #vercel-end
+
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error

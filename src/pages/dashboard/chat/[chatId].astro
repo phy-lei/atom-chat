@@ -30,9 +30,11 @@ const chatPartner = JSON.parse(chatPartnerRaw) as User;
 const initialMessages = results
   .map((message) => JSON.parse(message) as Message)
   .reverse();
+
+const title = `Phy-chat | ${chatPartner.name} chat `;
 ---
 
-<IndexLayout title="Welcome to Astro." session={session}>
+<IndexLayout title={title} session={session}>
   <div
     class="flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]"
   >

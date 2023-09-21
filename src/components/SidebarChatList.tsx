@@ -1,11 +1,4 @@
-import {
-  createSignal,
-  onMount,
-  onCleanup,
-  createEffect,
-  Show,
-  For,
-} from 'solid-js';
+import { createSignal, onMount, onCleanup, Show, For } from 'solid-js';
 import toast from 'solid-toast';
 import { pusherClient } from '@/server/pusherClient';
 import { toPusherKey, chatHrefConstructor } from '@/utils';
@@ -14,6 +7,7 @@ import UnseenChatToast from './UnseenChatToast';
 interface SidebarChatListProps {
   friends: User[];
   sessionId: string;
+  aiPage?: boolean;
 }
 
 interface ExtendedMessage extends Message {
@@ -21,11 +15,14 @@ interface ExtendedMessage extends Message {
   senderName: string;
 }
 
+const ownerEmail = import.meta.env.PUBLIC_OWNER_EMAIL;
+
 const SidebarChatList = (props: SidebarChatListProps) => {
   const [unseenMessages, setUnseenMessages] = createSignal<
     Record<string, Message[]>
   >({});
   const [activeChats, setActiveChats] = createSignal<User[]>(props.friends);
+  const [activeAiPage, setActiveAiPage] = createSignal(false);
 
   onMount(() => {
     pusherClient.subscribe(toPusherKey(`user:${props.sessionId}:chats`));
@@ -33,6 +30,9 @@ const SidebarChatList = (props: SidebarChatListProps) => {
 
     const newFriendHandler = (newFriend: User) => {
       setActiveChats((prev) => [...prev, newFriend]);
+      if (newFriend.email === ownerEmail) {
+        setActiveAiPage(true);
+      }
     };
 
     const chatHandler = (message: ExtendedMessage) => {
@@ -65,8 +65,24 @@ const SidebarChatList = (props: SidebarChatListProps) => {
       });
     };
 
+    const transitionChange = () => {
+      if (window.location.pathname.includes('chat')) {
+        setUnseenMessages((prev) => {
+          const keysArr = Object.keys(prev).filter(
+            (key) => !window.location.pathname.includes(key)
+          );
+
+          return keysArr.reduce((acc, id) => {
+            return { ...acc, [id]: prev[id] };
+          }, {});
+        });
+      }
+    };
+
     pusherClient.bind('new_message', chatHandler);
     pusherClient.bind('new_friend', newFriendHandler);
+    // viewTransition change event
+    document.addEventListener('astro:after-swap', transitionChange);
 
     onCleanup(() => {
       pusherClient.unsubscribe(toPusherKey(`user:${props.sessionId}:chats`));
@@ -74,33 +90,23 @@ const SidebarChatList = (props: SidebarChatListProps) => {
 
       pusherClient.unbind('new_message', chatHandler);
       pusherClient.unbind('new_friend', newFriendHandler);
+      document.removeEventListener('astro:after-swap', transitionChange);
     });
-  });
-
-  createEffect(() => {
-    if (window.location.pathname.includes('chat')) {
-      setUnseenMessages((prev) => {
-        const keysArr = Object.keys(prev).filter(
-          (key) => !window.location.pathname.includes(key)
-        );
-
-        return keysArr.reduce((acc, id) => {
-          return { ...acc, [id]: prev[id] };
-        }, {});
-      });
-    }
   });
 
   return (
     <ul role="list" class="max-h-[25rem] overflow-y-auto -mx-2 space-y-1">
-      <li>
-        <a
-          href={`/dashboard/ai`}
-          class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-        >
-          Rayone
-        </a>
-      </li>
+      <Show when={props.aiPage || activeAiPage()} fallback={null}>
+        <li>
+          <a
+            href={`/dashboard/ai`}
+            class="color-#FF7E33 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+          >
+            Rayone🤖️
+          </a>
+        </li>
+      </Show>
+
       <For each={activeChats().sort()}>
         {(friend) => {
           return (
@@ -111,6 +117,7 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                   friend.id
                 )}`}
                 class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                rel="prefetch"
               >
                 {friend.name}
                 <Show

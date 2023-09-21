@@ -1,18 +1,24 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
 import { Toaster } from 'solid-toast';
 import FriendRequestSidebarOptions from '@/components/FriendRequestSidebarOptions';
 import SignOutButton from '@/components/SignOutButton';
-import { getFriendsByUserId, fetchRedis } from '@/server/redis';
-import { chatHrefConstructor } from '@/utils';
+import {
+  getFriendsByUserId,
+  fetchRedis,
+  isAlreadyFriendByOwnerEmail,
+} from '@/server/redis';
 import SidebarChatList from '@/components/SidebarChatList';
+import Button from '@/components/ui/Button';
 
 interface Props {
   title: string;
   session: Session;
   _friends?: User[];
+  authFriend?: boolean;
 }
 
-const { title, session, _friends } = Astro.props;
+const { title, session, _friends, authFriend } = Astro.props;
 
 const sidebarOptions = [
   {
@@ -30,6 +36,11 @@ const unseenRequestCount = (
     `user:${session.user.id}:incoming_friend_requests`
   )) as User[]
 ).length;
+
+const aiPage =
+  authFriend === undefined
+    ? await isAlreadyFriendByOwnerEmail(session.user.id)
+    : authFriend;
 ---
 
 <!DOCTYPE html>
@@ -41,30 +52,49 @@ const unseenRequestCount = (
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <ViewTransitions />
   </head>
   <body>
     <div class="w-full flex h-screen">
+      <div class="sm:hidden">
+        <div
+          class="fixed bg-zinc-50 border-b border-zinc-200 top-0 inset-x-0 py-2 px-4"
+        >
+          <div class="w-full flex justify-between items-center">
+            <a href="/dashboard" class="flex h-8 shrink-0 items-center">
+              <i class="i-bx:bxs-paper-plane h-8 w-8 text-indigo-600"></i>
+            </a>
+            <Button class="gap-1" id="menuBtn">
+              Menu <i class="i-carbon:menu"></i>
+            </Button>
+          </div>
+        </div>
+      </div>
       <div
-        class="hidden md:flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6"
+        class="hidden sm:flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 transition-all z-10 sidebar-fixed"
+        id="sideBar"
       >
-        <a href="/dashboard" class="flex h-16 shrink-0 items-center">
-          <i class="i-bx:bxs-paper-plane h-8 w-8 text-indigo-600"></i>
-        </a>
-        {
-          friends.length > 0 ? (
-            <div class="text-xs font-semibold leading-6 text-gray-400">
-              Your chats
-            </div>
-          ) : null
-        }
+        <div class="flex shrink-0 items-center justify-between">
+          <a href="/dashboard" class="flex h-16 shrink-0 items-center">
+            <i class="i-bx:bxs-paper-plane h-8 w-8 text-indigo-600"></i>
+          </a>
+          <i
+            id="close-btn"
+            class="i-carbon:close-large cursor-pointer hidden <sm:block"></i>
+        </div>
 
-        <nav class="flex flex-1 flex-col">
+        <div class="text-xs font-semibold leading-6 text-gray-400">
+          Your chats
+        </div>
+
+        <nav class="flex flex-1 flex-col" transition:persist>
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
               <SidebarChatList
                 client:load
                 sessionId={session.user.id}
                 friends={friends}
+                aiPage={aiPage}
               />
             </li>
             <li>
@@ -101,9 +131,9 @@ const unseenRequestCount = (
               </ul>
             </li>
 
-            <li class="-mx-6 mt-auto flex items-center">
+            <li class="mt-auto flex items-center justify-between max-w-full">
               <div
-                class="flex flex-1 items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900"
+                class="flex flex-1 items-center gap-x-4 py-3 text-sm font-semibold leading-6 text-gray-900"
               >
                 <div class="relative h-8 w-8 bg-gray-50">
                   <img
@@ -128,51 +158,80 @@ const unseenRequestCount = (
         </nav>
       </div>
 
-      <aside class="max-h-screen container-atom py-16 md:py-12 w-full">
+      <aside class="max-h-screen container-atom py-16 sm:py-12 w-full">
         <slot />
         <Toaster client:load />
       </aside>
     </div>
+    <style is:global>
+      :root {
+        --accent: 136, 58, 234;
+        --accent-light: 224, 204, 250;
+        --accent-dark: 49, 10, 101;
+        --accent-gradient: linear-gradient(
+          45deg,
+          rgb(var(--accent)),
+          rgb(var(--accent-light)) 30%,
+          white 60%
+        );
+      }
+      html {
+        font-family: system-ui, sans-serif;
+        background-size: 224px;
+      }
+      code {
+        font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
+          DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+      }
+      .scrollbar-w-2::-webkit-scrollbar {
+        width: 0.25rem;
+        height: 0.25rem;
+      }
+
+      .scrollbar-track-blue-lighter::-webkit-scrollbar-track {
+        background-color: #f7fafc;
+        background-color: rgba(247, 250, 252, 1);
+      }
+
+      .scrollbar-thumb-blue::-webkit-scrollbar-thumb {
+        --bg-opacity: 1;
+        background-color: #edf2f7;
+        background-color: rgba(237, 242, 247, 1);
+      }
+
+      .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
+        border-radius: 0.25rem;
+      }
+
+      .sider_bar__fixed__open {
+        transform: translateX(0%) !important;
+      }
+      @media (max-width: 639px) {
+        .sidebar-fixed {
+          display: flex !important;
+          position: fixed;
+          left: 0;
+          top: 0;
+          transform: translateX(-100%);
+        }
+      }
+    </style>
+
+    <script>
+      const menuBtn = document.getElementById('menuBtn');
+      const sideBar = document.getElementById('sideBar');
+      const closeBtn = document.getElementById('close-btn');
+      const OPEN_SIDEBAR_CLASSNAME = 'sider_bar__fixed__open';
+
+      menuBtn.addEventListener('click', () => {
+        sideBar.classList.add(OPEN_SIDEBAR_CLASSNAME);
+      });
+
+      function closeHandler() {
+        sideBar.classList.remove(OPEN_SIDEBAR_CLASSNAME);
+      }
+
+      closeBtn.addEventListener('click', closeHandler);
+    </script>
   </body>
 </html>
-<style is:global>
-  :root {
-    --accent: 136, 58, 234;
-    --accent-light: 224, 204, 250;
-    --accent-dark: 49, 10, 101;
-    --accent-gradient: linear-gradient(
-      45deg,
-      rgb(var(--accent)),
-      rgb(var(--accent-light)) 30%,
-      white 60%
-    );
-  }
-  html {
-    font-family: system-ui, sans-serif;
-    background-size: 224px;
-  }
-  code {
-    font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-      DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-  }
-  .scrollbar-w-2::-webkit-scrollbar {
-    width: 0.25rem;
-    height: 0.25rem;
-  }
-
-  .scrollbar-track-blue-lighter::-webkit-scrollbar-track {
-    --bg-opacity: 1;
-    background-color: #f7fafc;
-    background-color: rgba(247, 250, 252, var(--bg-opacity));
-  }
-
-  .scrollbar-thumb-blue::-webkit-scrollbar-thumb {
-    --bg-opacity: 1;
-    background-color: #edf2f7;
-    background-color: rgba(237, 242, 247, var(--bg-opacity));
-  }
-
-  .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
-    border-radius: 0.25rem;
-  }
-</style>

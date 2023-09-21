@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js';
+import { createSignal, onMount, onCleanup } from 'solid-js';
 import toast from 'solid-toast';
 import Button from './ui/Button';
 
@@ -72,6 +72,31 @@ const ChatInput = (props: ChatInputProps) => {
       }
     });
   };
+
+  const scrollToBottom = () => {
+    const event = new Event('scrollToBottom');
+    window.dispatchEvent(event);
+  };
+
+  onMount(() => {
+    let originHeight =
+      document.documentElement.clientHeight || document.body.clientHeight;
+
+    const resizeHandler = () => {
+      const resizeHeight =
+        document.documentElement.clientHeight || document.body.clientHeight;
+      if (originHeight > resizeHeight) {
+        scrollToBottom();
+      }
+      originHeight = resizeHeight;
+    };
+
+    window.addEventListener('resize', resizeHandler);
+
+    onCleanup(() => {
+      window.removeEventListener('resize', resizeHandler);
+    });
+  });
 
   return (
     <div class="border-t border-gray-200 px-4 pt-4 mb-2 sm:mb-0">

@@ -19,8 +19,9 @@ const friendsWithLastMessage = await Promise.all(
       -1
     )) as string[];
 
-    const lastMessage = JSON.parse(lastMessageRaw) as Message;
-
+    const lastMessage = lastMessageRaw
+      ? (JSON.parse(lastMessageRaw) as Message)
+      : ({} as Message);
     return {
       ...friend,
       lastMessage,
@@ -29,7 +30,7 @@ const friendsWithLastMessage = await Promise.all(
 );
 ---
 
-<IndexLayout title="Welcome to Astro." session={session} _friends={friends}>
+<IndexLayout title="Phy-chat | Dashboard" session={session} _friends={friends}>
   <main class="pt-8">
     <h1 class="font-bold text-5xl mb-8">Recent chats</h1>
     {
@@ -52,8 +53,8 @@ const friendsWithLastMessage = await Promise.all(
                 <div class="relative h-6 w-6">
                   <img
                     class="rounded-full"
-                    alt={`${friend.name} profile picture`}
                     src={friend.image}
+                    alt={`${friend.name} profile picture`}
                   />
                 </div>
               </div>

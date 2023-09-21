@@ -1,4 +1,5 @@
-import { createSignal, onMount, onCleanup, For } from 'solid-js';
+import { createSignal, onMount, onCleanup, For, createEffect } from 'solid-js';
+import { useScroll } from 'solidjs-use';
 import { clsx } from 'clsx';
 import { pusherClient } from '@/server/pusherClient';
 import { toPusherKey } from '@/utils';
@@ -11,11 +12,28 @@ interface MessagesProps {
   sessionImg: string | null | undefined;
   chatPartner: User;
 }
+const MESSAGES_SIZE = 20;
 
 const Messages = (props: MessagesProps) => {
-  const [messages, setMessages] = createSignal<Message[]>(
-    props.initialMessages
-  );
+  const messageQueue = [...props.initialMessages];
+  const [scrollEl, setScrollEl] = createSignal<HTMLElement>();
+  const { arrivedState, setY } = useScroll(scrollEl, {
+    offset: { bottom: 100 },
+  });
+
+  const shiftMessageQueue = () => {
+    return messageQueue.splice(0, MESSAGES_SIZE);
+  };
+
+  const [messages, setMessages] = createSignal<Message[]>([]);
+
+  createEffect(() => {
+    if (arrivedState.top) {
+      if (messageQueue?.length) {
+        setMessages((prev) => [...prev, ...shiftMessageQueue()]);
+      }
+    }
+  });
 
   onMount(() => {
     pusherClient.subscribe(toPusherKey(`chat:${props.chatId}`));
@@ -34,20 +52,24 @@ const Messages = (props: MessagesProps) => {
       });
     };
 
+    const scrollToBottom = () => {
+      setY(scrollEl().scrollHeight);
+    };
+
     pusherClient.bind('incoming-message', messageHandler);
     pusherClient.bind('delete-message', delMessageHandler);
+    window.addEventListener('scrollToBottom', scrollToBottom);
 
     onCleanup(() => {
       pusherClient.unsubscribe(toPusherKey(`chat:${props.chatId}`));
       pusherClient.unbind('incoming-message', messageHandler);
+      window.removeEventListener('scrollToBottom', scrollToBottom);
     });
   });
 
-  let scrollDownRef;
-
   return (
     <div
-      ref={scrollDownRef}
+      ref={setScrollEl}
       id="messages"
       class="flex h-full flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
     >
