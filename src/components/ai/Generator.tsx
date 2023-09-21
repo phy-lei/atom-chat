@@ -172,14 +172,6 @@ export default (props: { sessionImg: string }) => {
     }
   };
 
-  const clear = () => {
-    inputRef.value = '';
-    inputRef.style.height = 'auto';
-    setMessageList([]);
-    setCurrentAssistantMessage('');
-    setCurrentError(null);
-  };
-
   const stopStreamFetch = () => {
     if (controller()) {
       controller().abort();
