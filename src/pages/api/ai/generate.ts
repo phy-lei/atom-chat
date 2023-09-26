@@ -5,7 +5,7 @@ import { generatePayload, parseOpenAIStream } from '@/utils/openAI'
 import { verifySignature } from '@/utils/ai'
 import type { APIRoute } from 'astro'
 import { isAlreadyFriendByOwnerEmail } from '@/server/redis';
-import { getSession } from '@solid-auth/base'
+import { getSession } from "@auth/solid-start"
 import { authOptions } from '@/server/auth'
 
 const apiKey = import.meta.env.OPENAI_API_KEY

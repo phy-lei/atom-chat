@@ -1,4 +1,4 @@
-import { getSession } from '@solid-auth/base'
+import { getSession } from "@auth/solid-start"
 import { authOptions } from '@/server/auth'
 import { db } from '@/server/db'
 import type { APIRoute } from 'astro'

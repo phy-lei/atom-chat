@@ -1,8 +1,8 @@
 import GithubProvider from '@auth/core/providers/github'
+import { type SolidAuthConfig } from "@auth/solid-start"
 import { UpstashRedisAdapter } from '@next-auth/upstash-redis-adapter'
 import { fetchRedis } from './redis'
 import { db } from './db'
-import type { SolidAuthConfig } from '@solid-auth/base'
 
 export const authOptions: SolidAuthConfig = {
   adapter: UpstashRedisAdapter(db) as any,

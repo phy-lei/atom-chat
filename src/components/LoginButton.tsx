@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js';
-import { signIn } from '@solid-auth/base/client';
+import { signIn } from '@auth/solid-start/client';
 import Button from './ui/Button';
 
 const LoginButton = () => {

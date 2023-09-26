@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js';
-import { signOut } from '@solid-auth/base/client';
+import { signOut } from '@auth/solid-start/client';
 import Button from './ui/Button';
 
 const SignOutButton = (props) => {

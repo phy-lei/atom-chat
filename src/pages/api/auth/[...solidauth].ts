@@ -1,4 +1,4 @@
-import { SolidAuth } from '@solid-auth/base'
+import { SolidAuth } from "@auth/solid-start"
 import { authOptions } from '@/server/auth'
 
-export const { GET: get, POST: post } = SolidAuth(authOptions)
+export const { GET, POST } = SolidAuth(authOptions)

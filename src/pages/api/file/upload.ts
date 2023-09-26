@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro'
-import { getSession } from '@solid-auth/base'
+import { getSession } from "@auth/solid-start"
 import { authOptions } from '@/server/auth'
 
 const accessToken = import.meta.env.GITHUB_ACCESS_TOKEN;

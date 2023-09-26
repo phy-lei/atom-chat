@@ -1,4 +1,4 @@
-import { getSession } from '@solid-auth/base'
+import { getSession } from "@auth/solid-start"
 import { authOptions } from '@/server/auth'
 import { fetchRedis } from '@/server/redis'
 import { db } from '@/server/db'

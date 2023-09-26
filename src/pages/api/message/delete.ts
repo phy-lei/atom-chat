@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro'
 import { db } from '@/server/db'
 import { pusherServer } from '@/server/pusherServer'
 import { toPusherKey } from '@/utils'
-import { getSession } from '@solid-auth/base'
+import { getSession } from "@auth/solid-start"
 import { authOptions } from '@/server/auth'
 
 export const post: APIRoute = async (context) => {
