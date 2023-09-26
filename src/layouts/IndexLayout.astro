@@ -1,4 +1,5 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
 import { Toaster } from 'solid-toast';
 import FriendRequestSidebarOptions from '@/components/FriendRequestSidebarOptions';
 import SignOutButton from '@/components/SignOutButton';
@@ -51,12 +52,14 @@ const aiPage =
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <ViewTransitions />
   </head>
   <body>
     <div class="w-full flex h-screen">
       <div class="sm:hidden">
         <div
           class="fixed bg-zinc-50 border-b border-zinc-200 top-0 inset-x-0 py-2 px-4"
+          transition:persist
         >
           <div class="w-full flex justify-between items-center">
             <a href="/dashboard" class="flex h-8 shrink-0 items-center">
@@ -71,6 +74,7 @@ const aiPage =
       <div
         class="hidden sm:flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 transition-all z-10 sidebar-fixed"
         id="sideBar"
+        transition:persist
       >
         <div class="flex shrink-0 items-center justify-between">
           <a href="/dashboard" class="flex h-16 shrink-0 items-center">
@@ -85,7 +89,7 @@ const aiPage =
           Your chats
         </div>
 
-        <nav class="flex flex-1 flex-col" transition:persist>
+        <nav class="flex flex-1 flex-col">
           <ul role="list" class="flex flex-1 flex-col gap-y-7">
             <li>
               <SidebarChatList
@@ -227,7 +231,6 @@ const aiPage =
       const sideBar = document.getElementById('sideBar');
       const closeBtn = document.getElementById('close-btn');
       const OPEN_SIDEBAR_CLASSNAME = 'sider_bar__fixed__open';
-
       menuBtn.addEventListener('click', () => {
         sideBar.classList.add(OPEN_SIDEBAR_CLASSNAME);
       });
@@ -237,6 +240,8 @@ const aiPage =
       }
 
       closeBtn.addEventListener('click', closeHandler);
+
+      document.addEventListener('astro:after-swap', closeHandler);
     </script>
   </body>
 </html>
