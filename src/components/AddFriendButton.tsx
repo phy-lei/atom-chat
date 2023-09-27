@@ -1,4 +1,4 @@
-import { createSignal, Switch, Match, JSX } from 'solid-js';
+import { createSignal, Switch, Match, type JSX } from 'solid-js';
 import { useClipboard } from 'solidjs-use';
 import toast from 'solid-toast';
 import Button from './ui/Button';

@@ -1,4 +1,4 @@
-import { Component, JSX, Show, createSignal } from 'solid-js';
+import { type Component, type JSX, Show, createSignal } from 'solid-js';
 
 interface ImgViewerProps extends JSX.ImgHTMLAttributes<HTMLImageElement> {}
 
