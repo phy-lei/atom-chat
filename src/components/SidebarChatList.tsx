@@ -3,6 +3,7 @@ import toast from 'solid-toast';
 import { pusherClient } from '@/server/pusherClient';
 import { toPusherKey, chatHrefConstructor } from '@/utils';
 import UnseenChatToast from './UnseenChatToast';
+import Button from './ui/Button';
 
 interface SidebarChatListProps {
   friends: User[];
@@ -21,7 +22,13 @@ const SidebarChatList = (props: SidebarChatListProps) => {
   const [unseenMessages, setUnseenMessages] = createSignal<
     Record<string, Message[]>
   >({});
-  const [activeChats, setActiveChats] = createSignal<User[]>(props.friends);
+
+  const [activeChats, setActiveChats] = createSignal<User[]>(
+    props.friends.sort()
+  );
+
+  const [delDialogActive, setDelDialogActive] = createSignal<string>();
+
   const [activeAiPage, setActiveAiPage] = createSignal(false);
 
   onMount(() => {
@@ -94,8 +101,31 @@ const SidebarChatList = (props: SidebarChatListProps) => {
     });
   });
 
+  const handleDel = (friend: User) => {
+    setDelDialogActive(friend.id);
+  };
+
+  const confirm = async (friend: User, index: number) => {
+    const res = await fetch('/api/friends/delete', {
+      method: 'POST',
+      body: JSON.stringify({
+        targetId: friend.id,
+      }),
+    });
+    if (!res.ok) {
+      toast.error('Something went wrong. Please try again later.');
+    } else {
+      const chatArr = [...activeChats()];
+      chatArr.splice(index, 1);
+      setActiveChats(chatArr);
+      if (window.location.pathname.includes(friend.id)) {
+        window.location.href = window.location.origin;
+      }
+    }
+  };
+
   return (
-    <ul role="list" class="max-h-[25rem] overflow-y-auto -mx-2 space-y-1">
+    <ul role="list" class="max-h-[25rem] -mx-2 space-y-1">
       <Show when={props.aiPage || activeAiPage()} fallback={null}>
         <li>
           <a
@@ -107,16 +137,16 @@ const SidebarChatList = (props: SidebarChatListProps) => {
         </li>
       </Show>
 
-      <For each={activeChats().sort()}>
-        {(friend) => {
+      <For each={activeChats()}>
+        {(friend, index) => {
           return (
-            <li>
+            <li class="flex items-center justify-between hover:bg-gray-50 group relative">
               <a
                 href={`/dashboard/chat/${chatHrefConstructor(
                   props.sessionId,
                   friend.id
                 )}`}
-                class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                class="text-gray-700 group-hover:text-indigo-600  flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                 rel="prefetch"
               >
                 {friend.name}
@@ -129,6 +159,40 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                   </div>
                 </Show>
               </a>
+              <i
+                class="i-carbon:trash-can cursor-pointer invisible group-hover:visible"
+                onClick={() => handleDel(friend)}
+              ></i>
+              <div
+                classList={{
+                  block: delDialogActive() === friend.id,
+                  hidden: delDialogActive() !== friend.id,
+                }}
+                class="bg-white rounded shadow-[var(--box-shadow-light)] p-2 absolute right-0 top-100% z-10"
+                style={{
+                  '--box-shadow-light': '0px 0px 12px rgba(0, 0, 0, .12)',
+                }}
+              >
+                <p class="text-sm mb-4">Are you sure to delete your friend?</p>
+                <div class="flex gap-1 justify-end">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setDelDialogActive()}
+                  >
+                    cancel
+                  </Button>
+                  <Button size="sm" onClick={() => confirm(friend, index())}>
+                    confirm
+                  </Button>
+                </div>
+                <div
+                  class="w-2 h-2 bg-white absolute left-50% top-0 -translate-y-100% "
+                  style={{
+                    'clip-path': 'polygon(0.25rem 0, 0 0.5rem, 0.5rem 0.5rem)',
+                  }}
+                ></div>
+              </div>
             </li>
           );
         }}
