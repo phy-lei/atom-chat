@@ -6,7 +6,7 @@ import { pusherServer } from '@/server/pusherServer'
 import { toPusherKey } from '@/utils'
 import type { APIRoute } from 'astro'
 
-export const post: APIRoute = async (context) => {
+export const POST: APIRoute = async (context) => {
   try {
     const body = await context.request.json()
     const { email } = body

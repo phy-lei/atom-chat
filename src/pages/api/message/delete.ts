@@ -5,7 +5,7 @@ import { toPusherKey } from '@/utils'
 import { getSession } from "@auth/solid-start"
 import { authOptions } from '@/server/auth'
 
-export const post: APIRoute = async (context) => {
+export const POST: APIRoute = async (context) => {
   try {
     const body = await context.request.json()
     const { chatId, message, index } = body

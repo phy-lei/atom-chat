@@ -7,7 +7,7 @@ import { db } from '@/server/db'
 import { pusherServer } from '@/server/pusherServer'
 import { toPusherKey } from '@/utils'
 
-export const post: APIRoute = async (context) => {
+export const POST: APIRoute = async (context) => {
   try {
     const body = await context.request.json()
     const { text, chatId } = body

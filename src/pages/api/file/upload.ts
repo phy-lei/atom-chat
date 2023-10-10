@@ -3,7 +3,7 @@ import { getSession } from "@auth/solid-start"
 import { authOptions } from '@/server/auth'
 
 const accessToken = import.meta.env.GITHUB_ACCESS_TOKEN;
-export const post: APIRoute = async (context) => {
+export const POST: APIRoute = async (context) => {
   try {
     const body = await context.request.json()
     const { base64 } = body

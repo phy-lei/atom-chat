@@ -3,7 +3,7 @@ import { authOptions } from '@/server/auth'
 import { db } from '@/server/db'
 import type { APIRoute } from 'astro'
 
-export const post: APIRoute = async (context) => {
+export const POST: APIRoute = async (context) => {
   try {
     const body = await context.request.json()
     const { id: idToDeny } = body

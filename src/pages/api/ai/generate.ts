@@ -11,7 +11,7 @@ import { authOptions } from '@/server/auth'
 const apiKey = import.meta.env.OPENAI_API_KEY
 const baseUrl = ((import.meta.env.OPENAI_API_BASE_URL) || 'https://api.openai.com').trim().replace(/\/$/, '')
 
-export const post: APIRoute = async (context) => {
+export const POST: APIRoute = async (context) => {
   const body = await context.request.json()
   const { sign, time, messages } = body
 
