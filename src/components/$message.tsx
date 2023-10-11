@@ -15,7 +15,7 @@ const Warning = (props: Props) => {
         onClick={props.destroy}
       ></div>
       <div
-        class="fixed min-w-375px left-50% top-50% -translate-y-50% -translate-x-50% rounded bg-white shadow-[var(--box-shadow-light)] p-4 z-999"
+        class="fixed min-w-375px left-50% top-50% -translate-y-50% -translate-x-50% rounded bg-white shadow-[var(--box-shadow-light)] p-4 z-999 animate-fade-in animate-duration-500"
         style={{
           '--box-shadow-light': '0px 0px 12px rgba(0, 0, 0, .12)',
         }}

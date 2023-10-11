@@ -22,8 +22,8 @@ const UnseenChatToast = ({
   return (
     <div
       class={clsx(
-        'max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5',
-        { 'animate-enter': t.visible, 'animate-leave': !t.visible }
+        'max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 animate-duration-500',
+        { 'animate-fade-in': t.visible, 'animate-fade-out': !t.visible }
       )}
     >
       <a
