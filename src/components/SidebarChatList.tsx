@@ -3,7 +3,7 @@ import toast from 'solid-toast';
 import { pusherClient } from '@/server/pusherClient';
 import { toPusherKey, chatHrefConstructor } from '@/utils';
 import UnseenChatToast from './UnseenChatToast';
-import Button from './ui/Button';
+import $message from '@/components/$message';
 
 interface SidebarChatListProps {
   friends: User[];
@@ -26,8 +26,6 @@ const SidebarChatList = (props: SidebarChatListProps) => {
   const [activeChats, setActiveChats] = createSignal<User[]>(
     props.friends.sort()
   );
-
-  const [delDialogActive, setDelDialogActive] = createSignal<string>();
 
   const [activeAiPage, setActiveAiPage] = createSignal(false);
 
@@ -101,8 +99,10 @@ const SidebarChatList = (props: SidebarChatListProps) => {
     });
   });
 
-  const handleDel = (friend: User) => {
-    setDelDialogActive(friend.id);
+  const handleDel = (friend: User, index: number) => {
+    $message({ text: 'Are you sure to delete your friend?' }).then(() => {
+      confirm(friend, index);
+    });
   };
 
   const confirm = async (friend: User, index: number) => {
@@ -125,7 +125,7 @@ const SidebarChatList = (props: SidebarChatListProps) => {
   };
 
   return (
-    <ul role="list" class="max-h-[25rem] -mx-2 space-y-1">
+    <ul role="list" class="max-h-[25rem] -mx-2 space-y-1 overflow-y-auto">
       <Show when={props.aiPage || activeAiPage()} fallback={null}>
         <li>
           <a
@@ -161,38 +161,8 @@ const SidebarChatList = (props: SidebarChatListProps) => {
               </a>
               <i
                 class="i-carbon:trash-can cursor-pointer invisible group-hover:visible"
-                onClick={() => handleDel(friend)}
+                onClick={() => handleDel(friend, index())}
               ></i>
-              <div
-                classList={{
-                  block: delDialogActive() === friend.id,
-                  hidden: delDialogActive() !== friend.id,
-                }}
-                class="bg-white rounded shadow-[var(--box-shadow-light)] p-2 absolute right-0 top-100% z-10"
-                style={{
-                  '--box-shadow-light': '0px 0px 12px rgba(0, 0, 0, .12)',
-                }}
-              >
-                <p class="text-sm mb-4">Are you sure to delete your friend?</p>
-                <div class="flex gap-1 justify-end">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setDelDialogActive()}
-                  >
-                    cancel
-                  </Button>
-                  <Button size="sm" onClick={() => confirm(friend, index())}>
-                    confirm
-                  </Button>
-                </div>
-                <div
-                  class="w-2 h-2 bg-white absolute left-50% top-0 -translate-y-100% "
-                  style={{
-                    'clip-path': 'polygon(0.25rem 0, 0 0.5rem, 0.5rem 0.5rem)',
-                  }}
-                ></div>
-              </div>
             </li>
           );
         }}
