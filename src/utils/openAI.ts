@@ -1,16 +1,17 @@
 import { createParser } from 'eventsource-parser'
+import prompts from './prompts'
 import type { ParsedEvent, ReconnectInterval } from 'eventsource-parser'
 import type { ChatMessage } from '@/types/aiChat'
 
 export const model = import.meta.env.OPENAI_API_MODEL || 'gpt-3.5-turbo'
 
-export const generatePayload = (apiKey: string, messages: ChatMessage[], prompt: string): RequestInit & { dispatcher?: any } => {
+export const generatePayload = (apiKey: string, messages: ChatMessage[], prompt: number): RequestInit & { dispatcher?: any } => {
   // 检查 messages 数组是否开始于一个 "system" 角色的消息
   if (messages.length === 0 || messages[0].role !== 'system') {
     // 如果没有，添加一个 "system" 角色的消息到数组开始
     messages.unshift({
       role: 'system',
-      content: prompt,
+      content: prompts[prompt].prompt,
     })
   }
 

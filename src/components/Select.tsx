@@ -7,11 +7,11 @@ const Select = () => {
   const [show, setShow] = createSignal(false);
   const [prompt, setPrompt] = createSignal(prompts[0]);
 
-  const handleClick = (item: (typeof prompts)[number]) => {
+  const handleClick = (item: (typeof prompts)[number], index: number) => {
     setPrompt(item);
     setShow(false);
     const event = new CustomEvent(EventName.SET_PROMPT, {
-      detail: item.prompt,
+      detail: index,
     });
     window.dispatchEvent(event);
   };
@@ -39,13 +39,13 @@ const Select = () => {
         )}
       >
         <For each={prompts}>
-          {(item) => (
+          {(item, index) => (
             <div
               class={clsx(
                 'pl-2 pr-2 lh-loose hover:bg-gray-200 text-14px cursor-pointer',
                 item.act === prompt().act ? 'color-blue' : ''
               )}
-              onClick={() => handleClick(item)}
+              onClick={() => handleClick(item, index())}
             >
               {item.act}
             </div>

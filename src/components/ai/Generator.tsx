@@ -5,12 +5,11 @@ import MessageItem from './MessageItem';
 import ErrorMessageItem from './ErrorMessageItem';
 import Button from '../ui/Button';
 import { EventName } from '@/utils/constants';
-import prompts from '@/utils/prompts';
 import type { ChatMessage, ErrorMessage } from '@/types/aiChat';
 
 export default (props: { sessionImg: string }) => {
   let inputRef: HTMLTextAreaElement;
-  let prompt = prompts[0].prompt;
+  let prompt = 0;
   const [currentSystemRoleSettings, setCurrentSystemRoleSettings] =
     createSignal('');
   const [messageList, setMessageList] = createSignal<ChatMessage[]>([]);
