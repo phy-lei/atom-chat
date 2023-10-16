@@ -13,8 +13,7 @@ const baseUrl = ((import.meta.env.OPENAI_API_BASE_URL) || 'https://api.openai.co
 
 export const POST: APIRoute = async (context) => {
   const body = await context.request.json()
-  const { sign, time, messages } = body
-
+  const { sign, time, messages, prompt } = body
   const session: Session = (await getSession(context.request, authOptions)) as any
 
   if (!session) return new Response(JSON.stringify({
@@ -47,7 +46,7 @@ export const POST: APIRoute = async (context) => {
       },
     }), { status: 401 })
   }
-  const initOptions = generatePayload(apiKey, messages)
+  const initOptions = generatePayload(apiKey, messages, prompt)
 
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -4,10 +4,13 @@ import { generateSignature } from '@/utils/ai';
 import MessageItem from './MessageItem';
 import ErrorMessageItem from './ErrorMessageItem';
 import Button from '../ui/Button';
+import { EventName } from '@/utils/constants';
+import prompts from '@/utils/prompts';
 import type { ChatMessage, ErrorMessage } from '@/types/aiChat';
 
 export default (props: { sessionImg: string }) => {
   let inputRef: HTMLTextAreaElement;
+  let prompt = prompts[0].prompt;
   const [currentSystemRoleSettings, setCurrentSystemRoleSettings] =
     createSignal('');
   const [messageList, setMessageList] = createSignal<ChatMessage[]>([]);
@@ -43,9 +46,15 @@ export default (props: { sessionImg: string }) => {
       console.error(err);
     }
 
+    const setPrompt = (e: CustomEvent) => {
+      prompt = e.detail;
+    };
+
     window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener(EventName.SET_PROMPT, setPrompt);
     onCleanup(() => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener(EventName.SET_PROMPT, setPrompt);
     });
   });
 
@@ -103,6 +112,7 @@ export default (props: { sessionImg: string }) => {
           messages: requestMessageList.reverse(),
           time: timestamp,
           pass: '',
+          prompt,
           sign: await generateSignature({
             t: timestamp,
             m:

@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 import { pusherClient } from '@/server/pusherClient';
 import { toPusherKey } from '@/utils';
 import ChatBubble from './ChatBubble';
+import { EventName } from '@/utils/constants';
 
 interface MessagesProps {
   initialMessages: Message[];
@@ -58,12 +59,12 @@ const Messages = (props: MessagesProps) => {
 
     pusherClient.bind('incoming-message', messageHandler);
     pusherClient.bind('delete-message', delMessageHandler);
-    window.addEventListener('scrollToBottom', scrollToBottom);
+    window.addEventListener(EventName.SCROLL_TO_BOTTOM, scrollToBottom);
 
     onCleanup(() => {
       pusherClient.unsubscribe(toPusherKey(`chat:${props.chatId}`));
       pusherClient.unbind('incoming-message', messageHandler);
-      window.removeEventListener('scrollToBottom', scrollToBottom);
+      window.removeEventListener(EventName.SCROLL_TO_BOTTOM, scrollToBottom);
     });
   });
 

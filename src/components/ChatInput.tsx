@@ -1,6 +1,7 @@
 import { createSignal, onMount, onCleanup } from 'solid-js';
 import toast from 'solid-toast';
 import Button from './ui/Button';
+import { EventName } from '@/utils/constants';
 
 interface ChatInputProps {
   chatPartner: User;
@@ -74,7 +75,7 @@ const ChatInput = (props: ChatInputProps) => {
   };
 
   const scrollToBottom = () => {
-    const event = new Event('scrollToBottom');
+    const event = new Event(EventName.SCROLL_TO_BOTTOM);
     window.dispatchEvent(event);
   };
 

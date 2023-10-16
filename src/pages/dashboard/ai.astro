@@ -1,6 +1,7 @@
 ---
 import { getSession } from '@auth/solid-start';
 import { authOptions } from '@/server/auth';
+import Select from '@/components/Select';
 import Generator from '@/components/ai/Generator';
 import IndexLayout from '../../layouts/IndexLayout.astro';
 import { isAlreadyFriendByOwnerEmail } from '@/server/redis';
@@ -32,15 +33,14 @@ if (!authFriend) return Astro.redirect('/404');
             />
           </div>
         </div>
-
         <div class="flex flex-col leading-tight">
           <div class="text-xl flex items-center">
             <span class="text-gray-700 mr-3 font-semibold"> Chat Robot</span>
           </div>
-
           <span class="text-sm text-gray-600">Rayone</span>
         </div>
       </div>
+      <Select client:load />
     </div>
     <Generator sessionImg={session.user.image} client:load />
   </div>
