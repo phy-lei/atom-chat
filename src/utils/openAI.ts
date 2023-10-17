@@ -19,7 +19,6 @@ export const generatePayload = (apiKey: string, messages: ChatMessage[], prompt:
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${apiKey}`,
-      'Cache-Control': 'no-store',
     },
     method: 'POST',
     body: JSON.stringify({
@@ -46,7 +45,6 @@ export const parseOpenAIStream = (rawResponse: Response) => {
       const streamParser = (event: ParsedEvent | ReconnectInterval) => {
         if (event.type === 'event') {
           const data = event.data
-          console.log(data)
           if (data === '[DONE]') {
             controller.close()
             return
@@ -68,16 +66,5 @@ export const parseOpenAIStream = (rawResponse: Response) => {
     },
   })
 
-  // to prevent browser prompt for credentials
-  const newHeaders = new Headers(rawResponse.headers);
-  newHeaders.delete("www-authenticate");
-  // to disable nginx buffering
-  newHeaders.set("X-Accel-Buffering", "no");
-  newHeaders.set("Connection", "keep-alive");
-
-  return new Response(stream, {
-    status: rawResponse.status,
-    statusText: rawResponse.statusText,
-    headers: newHeaders,
-  })
+  return new Response(stream)
 }
