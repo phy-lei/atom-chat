@@ -52,9 +52,12 @@ export const parseOpenAIStream = (rawResponse: Response) => {
           }
           try {
             const json = JSON.parse(data)
-            const text = json.choices[0].delta?.content || ''
-            const queue = encoder.encode(text)
-            controller.enqueue(queue)
+            let text = json.choices[0].delta?.content || ''
+            while (text.length) {
+              const queue = encoder.encode(text[0])
+              controller.enqueue(queue)
+              text = text.substring(1)
+            }
           } catch (e) {
             controller.error(e)
           }
