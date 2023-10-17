@@ -46,6 +46,7 @@ export const parseOpenAIStream = (rawResponse: Response) => {
       const streamParser = (event: ParsedEvent | ReconnectInterval) => {
         if (event.type === 'event') {
           const data = event.data
+          console.log(data)
           if (data === '[DONE]') {
             controller.close()
             return
@@ -72,6 +73,7 @@ export const parseOpenAIStream = (rawResponse: Response) => {
   newHeaders.delete("www-authenticate");
   // to disable nginx buffering
   newHeaders.set("X-Accel-Buffering", "no");
+  newHeaders.set("Connection", "keep-alive");
 
   return new Response(stream, {
     status: rawResponse.status,
