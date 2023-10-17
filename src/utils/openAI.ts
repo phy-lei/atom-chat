@@ -52,12 +52,9 @@ export const parseOpenAIStream = (rawResponse: Response) => {
           }
           try {
             const json = JSON.parse(data)
-            let text = json.choices[0].delta?.content || ''
-            while (text.length) {
-              const queue = encoder.encode(text[0])
-              controller.enqueue(queue)
-              text = text.substring(1)
-            }
+            const text = json.choices[0].delta?.content || ''
+            const queue = encoder.encode(text)
+            controller.enqueue(queue)
           } catch (e) {
             controller.error(e)
           }
@@ -65,8 +62,12 @@ export const parseOpenAIStream = (rawResponse: Response) => {
       }
 
       const parser = createParser(streamParser)
-      for await (const chunk of rawResponse.body as any)
+
+      for await (const chunk of rawResponse.body as any) {
         parser.feed(decoder.decode(chunk))
+        parser.feed(decoder.decode(chunk))
+      }
+
     },
   })
 
