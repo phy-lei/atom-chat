@@ -19,6 +19,7 @@ export const generatePayload = (apiKey: string, messages: ChatMessage[], prompt:
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${apiKey}`,
+      'Cache-Control': 'no-store',
     },
     method: 'POST',
     body: JSON.stringify({
@@ -66,5 +67,16 @@ export const parseOpenAIStream = (rawResponse: Response) => {
     },
   })
 
-  return new Response(stream)
+  // to prevent browser prompt for credentials
+  const newHeaders = new Headers(rawResponse.headers);
+  newHeaders.delete("www-authenticate");
+  // to disable nginx buffering
+  newHeaders.set("X-Accel-Buffering", "no");
+  newHeaders.set("Connection", "keep-alive");
+
+  return new Response(stream, {
+    status: rawResponse.status,
+    statusText: rawResponse.statusText,
+    headers: newHeaders,
+  })
 }

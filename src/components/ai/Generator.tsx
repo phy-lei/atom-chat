@@ -136,8 +136,18 @@ export default (props: { sessionImg: string }) => {
 
       while (!done) {
         const { value, done: readerDone } = await reader.read();
+        console.log(
+          '%c [ done ]',
+          'font-size:13px; background:pink; color:#bf2c9f;',
+          readerDone
+        );
         if (value) {
           const char = decoder.decode(value);
+          console.log(
+            '%c [ text ]',
+            'font-size:13px; background:pink; color:#bf2c9f;',
+            char
+          );
           if (char === '\n' && currentAssistantMessage().endsWith('\n'))
             continue;
 
