@@ -48,6 +48,12 @@ export const POST: APIRoute = async (context) => {
   }
   const initOptions = generatePayload(apiKey, messages, prompt)
 
+  context.request.headers.set
+
+  context.request.headers.set("Cache-Control", "no-cache");
+  context.request.headers.set("Content-Type", "text/event-stream");
+  context.request.headers.set("Connection", "keep-alive");
+
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
