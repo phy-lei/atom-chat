@@ -65,7 +65,10 @@ export const parseOpenAIStream = (rawResponse: Response) => {
 
       for await (const chunk of rawResponse.body as any) {
         parser.feed(decoder.decode(chunk))
-        parser.feed(decoder.decode(chunk))
+        setTimeout(() => {
+
+          parser.feed(decoder.decode(chunk))
+        }, 1000)
       }
 
     },
