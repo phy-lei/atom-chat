@@ -47,7 +47,7 @@ export const parseOpenAIStream = (rawResponse: Response) => {
         if (event.type === 'event') {
           const data = event.data
           if (data === '[DONE]') {
-            controller.close()
+            // controller.close()
             return
           }
           try {
@@ -66,8 +66,8 @@ export const parseOpenAIStream = (rawResponse: Response) => {
       for await (const chunk of rawResponse.body as any) {
         parser.feed(decoder.decode(chunk))
         setTimeout(() => {
-
           parser.feed(decoder.decode(chunk))
+          controller.close()
         }, 1000)
       }
 
