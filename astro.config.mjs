@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 import solidJs from '@astrojs/solid-js';
 import UnoCSS from 'unocss/astro';
-import vercel from '@astrojs/vercel/edge';
+import vercel from '@astrojs/vercel/serverless';
 import netlify from '@astrojs/netlify/functions';
 import node from '@astrojs/node';
 import prefetch from '@astrojs/prefetch';
@@ -10,7 +10,9 @@ import disableBlocks from './plugins/disableBlocks';
 const envAdapter = () => {
   switch (process.env.OUTPUT) {
     case 'vercel':
-      return vercel();
+      return vercel({
+        edgeMiddleware: true,
+      });
     case 'netlify':
       return netlify({
         edgeMiddleware: true,
