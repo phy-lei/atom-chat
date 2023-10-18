@@ -1,6 +1,3 @@
-// #vercel-disable-blocks
-import { fetch } from 'undici'
-// #vercel-end
 import { generatePayload, parseOpenAIStream } from '@/utils/openAI'
 import { verifySignature } from '@/utils/ai'
 import type { APIRoute } from 'astro'

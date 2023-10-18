@@ -77,9 +77,6 @@ dependencies:
   solidjs-use:
     specifier: ^2.3.0
     version: 2.3.0
-  undici:
-    specifier: ^5.23.0
-    version: 5.23.0
 
 devDependencies:
   '@evan-yang/eslint-config':
@@ -176,7 +173,7 @@ packages:
       astro: ^3.0.7
     dependencies:
       '@astrojs/underscore-redirects': 0.3.0
-      '@netlify/functions': 2.0.2
+      '@netlify/functions': 2.3.0
       astro: 3.0.13(@types/node@20.5.3)
       esbuild: 0.19.2
     dev: false
@@ -2269,11 +2266,11 @@ packages:
       - supports-color
     dev: false
 
-  /@netlify/functions@2.0.2:
-    resolution: {integrity: sha512-goWRtaIPUK/q47qLYtfGGj7HgJIRaT0snw7zZ0yeoNTfQfCRwQwvRrMAsXkCsCtq2N2Oo81L26SpkMxEQMk9hg==}
+  /@netlify/functions@2.3.0:
+    resolution: {integrity: sha512-E3kzXPWMP/r1rAWhjTaXcaOT47dhEvg/eQUJjRLhD9Zzp0WqkdynHr+bqff4rFNv6tuXrtFZrpbPJFKHH0c0zw==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@netlify/serverless-functions-api': 1.7.3
+      '@netlify/serverless-functions-api': 1.9.0
       is-promise: 4.0.0
     dev: false
 
@@ -2282,8 +2279,8 @@ packages:
     engines: {node: ^14.16.0 || >=16.0.0}
     dev: false
 
-  /@netlify/serverless-functions-api@1.7.3:
-    resolution: {integrity: sha512-n6/7cJlSWvvbBlUOEAbkGyEld80S6KbG/ldQI9OhLfe1lTatgKmrTNIgqVNpaWpUdTgP2OHWFjmFBzkxxBWs5w==}
+  /@netlify/serverless-functions-api@1.9.0:
+    resolution: {integrity: sha512-Jq4uk1Mwa5vyxImupJYXPP+I5yYcp3PtguvXtJRutKdm9DPALXfZVtCQzBWMNdZiqVWCM3La9hvaBsPjSMfeug==}
     engines: {node: ^14.18.0 || >=16.0.0}
     dependencies:
       '@netlify/node-cookies': 0.1.0

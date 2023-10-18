@@ -35,8 +35,7 @@
     "pusher-js": "^8.3.0",
     "solid-js": "^1.7.11",
     "solid-toast": "^0.5.0",
-    "solidjs-use": "^2.3.0",
-    "undici": "^5.23.0"
+    "solidjs-use": "^2.3.0"
   },
   "devDependencies": {
     "@evan-yang/eslint-config": "^1.0.9",
