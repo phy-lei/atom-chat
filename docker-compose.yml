@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  chatgpt-demo:
+    image: phylei/chat:latest
+    container_name: chat
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - NEXTAUTH_URL
+      - NEXTAUTH_SECRET
+      - UPSTASH_REDIS_REST_URL
+      - UPSTASH_REDIS_REST_TOKEN
+      - GITHUB_ID
+      - GITHUB_SECRET
+      - PUSHER_APP_ID
+      - PUBLIC_NEXT_PUSHER_APP_KEY
+      - PUSHER_APP_SECRET
+      - PUBLIC_NEXT_PUSHER_CLUSTER
+      - GITHUB_ACCESS_TOKEN
+      - PUBLIC_OWNER_EMAIL
+      - OPENAI_API_KEY
