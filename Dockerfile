@@ -16,4 +16,4 @@ ENV HOST=0.0.0.0
 ENV PORT=3000 
 ENV NODE_ENV=production
 EXPOSE $PORT
-CMD node ./dist/server/entry.mjs
+CMD ["/bin/sh", "docker-entrypoint.sh"]

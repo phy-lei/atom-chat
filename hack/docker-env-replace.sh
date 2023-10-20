@@ -15,6 +15,7 @@ public_next_pusher_cluster=$PUBLIC_NEXT_PUSHER_CLUSTER
 github_access_token=$GITHUB_ACCESS_TOKEN
 public_owner_email=$PUBLIC_OWNER_EMAIL
 
+
 for file in $(find ./dist -type f -name "*.mjs"); do
   sed "s/({}).OPENAI_API_KEY/\"$openai_api_key\"/g;
   s/({}).NEXTAUTH_URL/\"$nextauth_url\"/g;
