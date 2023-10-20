@@ -11,7 +11,7 @@ github_secret=$GITHUB_SECRET
 pusher_app_id=$PUSHER_APP_ID
 public_next_pusher_app_key=$PUBLIC_NEXT_PUSHER_APP_KEY
 pusher_app_secret=$PUSHER_APP_SECRET
-public_next_pusher_app_cluster=$PUBLIC_NEXT_PUSHER_CLUSTER
+public_next_pusher_cluster=$PUBLIC_NEXT_PUSHER_CLUSTER
 github_access_token=$GITHUB_ACCESS_TOKEN
 public_owner_email=$PUBLIC_OWNER_EMAIL
 
@@ -26,9 +26,9 @@ for file in $(find ./dist -type f -name "*.mjs"); do
   s/({}).PUSHER_APP_ID/\"$pusher_app_id\"/g;
   s/({}).PUBLIC_NEXT_PUSHER_APP_KEY/\"$public_next_pusher_app_key\"/g;
   s/({}).PUSHER_APP_SECRET/\"$pusher_app_secret\"/g;
-  s/({}).PUBLIC_NEXT_PUSHER_CLUSTER/\"$public_next_pusher_app_cluster\"/g;
+  s/({}).PUBLIC_NEXT_PUSHER_CLUSTER/\"$public_next_pusher_cluster\"/g;
   s/({}).GITHUB_ACCESS_TOKEN/\"$github_access_token\"/g;
-  s/process.env.PUBLIC_OWNER_EMAIL/\"$public_owner_email\"/g" $file > tmp
+  s/({}).PUBLIC_OWNER_EMAIL/\"$public_owner_email\"/g" $file > tmp
   mv tmp $file
 done
 
