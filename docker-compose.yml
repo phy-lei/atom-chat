@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   chatgpt-demo:
     image: phylei/atom-chat:latest
