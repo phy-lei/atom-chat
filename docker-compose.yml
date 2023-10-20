@@ -1,8 +1,8 @@
 version: '3'
 services:
   chatgpt-demo:
-    image: phylei/chat:latest
-    container_name: chat
+    image: phylei/atom-chat:latest
+    container_name: atom-chat
     restart: always
     ports:
       - '3000:3000'

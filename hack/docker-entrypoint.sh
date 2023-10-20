@@ -9,7 +9,6 @@ function init() {
 }
 
 function main {
-  init
 
   echo "Starting service..."
   eval "$sub_service_command &"
