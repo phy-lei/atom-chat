@@ -1,15 +1,12 @@
 FROM node:alpine as builder
 WORKDIR /usr/src
-RUN npm install -g pnpm
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
 COPY . .
 
 FROM node:alpine
 WORKDIR /usr/src
 RUN npm install -g pnpm
+COPY --from=builder /usr/src ./
 COPY --from=builder /usr/src/hack ./
-COPY package.json pnpm-lock.yaml ./
 RUN pnpm install
 ENV HOST=0.0.0.0
 ENV PORT=3000 
