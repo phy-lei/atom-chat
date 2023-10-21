@@ -5,7 +5,7 @@ sub_service_pid=""
 sub_service_command="node dist/server/entry.mjs"
 
 function init() {
-    /bin/sh ./docker-env-replace.sh
+    /bin/sh ./docker-env-write.sh
 }
 
 function main {
