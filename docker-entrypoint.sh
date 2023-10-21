@@ -10,8 +10,8 @@ function init() {
 
 function main {
   init
-  echo "Starting service..."
   eval "pnpm run build"
+  echo "Starting service..."
   eval "$sub_service_command &"
   sub_service_pid=$!
 
