@@ -2,7 +2,7 @@ version: '3'
 
 services:
   chatgpt-demo:
-    image: ghcr.io/phy-lei/atom-chat:main
+    image: phylei/atom-chat:latest
     container_name: atom-chat
     restart: always
     ports:
