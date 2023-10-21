@@ -1,7 +1,15 @@
 #!/bin/sh
 
-rm .env
-touch .env
+filename=".env"
+
+if [ -f "$filename" ]; then
+    # 如果文件存在，则删除
+    rm "$filename"
+    echo "文件已存在并已删除"
+    sleep 2
+fi
+
+touch "$filename"
 
 # 定义环境变量
 declare -A env_variables=(

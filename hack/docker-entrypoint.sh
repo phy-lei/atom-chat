@@ -10,7 +10,6 @@ function init() {
 
 function main {
   init
-  echo $OPENAI_API_KEY
   echo "Starting service..."
   eval "$sub_service_command &"
   sub_service_pid=$!
