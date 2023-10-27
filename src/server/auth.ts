@@ -21,7 +21,7 @@ export const authOptions: SolidAuthConfig = {
   ],
 
   secret: import.meta.env.NEXTAUTH_SECRET,
-
+  trustHost: true,
   callbacks: {
     async jwt({ token, user }) {
       const dbUserResult = (await fetchRedis('get', `user:${token.sub}`)) as
