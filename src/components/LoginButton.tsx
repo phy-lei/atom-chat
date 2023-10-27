@@ -2,15 +2,9 @@ import { createSignal } from 'solid-js';
 import { signIn } from '@auth/solid-start/client';
 import Button from './ui/Button';
 
-const ownerEmail = import.meta.env.PUBLIC_OWNER_EMAIL;
 const LoginButton = () => {
   const [isLoading, setIsLoading] = createSignal(false);
   const signInHandler = async () => {
-    console.log(
-      '%c [ xxx ]',
-      'font-size:13px; background:pink; color:#bf2c9f;',
-      ownerEmail
-    );
     setIsLoading(true);
     signIn('github');
   };
