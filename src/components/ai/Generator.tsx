@@ -213,6 +213,13 @@ export default (props: { sessionImg: string }) => {
         {currentError() && (
           <ErrorMessageItem data={currentError()} onRetry={retryLastFetch} />
         )}
+        {currentAssistantMessage() && (
+          <MessageItem
+            role="assistant"
+            message={currentAssistantMessage()}
+            sessionImg={props.sessionImg}
+          />
+        )}
         <For each={messageList()}>
           {(message, index) => (
             <MessageItem
@@ -227,13 +234,6 @@ export default (props: { sessionImg: string }) => {
             />
           )}
         </For>
-        {currentAssistantMessage() && (
-          <MessageItem
-            role="assistant"
-            message={currentAssistantMessage()}
-            sessionImg={props.sessionImg}
-          />
-        )}
       </div>
 
       <div class="border-t border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
