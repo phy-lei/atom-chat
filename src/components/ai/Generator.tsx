@@ -161,14 +161,17 @@ export default (props: { sessionImg: string }) => {
   };
 
   const archiveCurrentMessage = () => {
-    if (currentAssistantMessage()) {
-      setMessageList([
-        {
-          role: 'assistant',
-          content: currentAssistantMessage(),
-        },
-        ...messageList(),
-      ]);
+    const content = currentAssistantMessage();
+    if (content) {
+      if (content !== 'generating...') {
+        setMessageList([
+          {
+            role: 'assistant',
+            content: currentAssistantMessage(),
+          },
+          ...messageList(),
+        ]);
+      }
       setCurrentAssistantMessage('');
       setLoading(false);
       setController(null);
