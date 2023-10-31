@@ -97,7 +97,7 @@ export default (props: { sessionImg: string }) => {
 
   const requestWithLatestMessage = async () => {
     setLoading(true);
-    setCurrentAssistantMessage('');
+    setCurrentAssistantMessage('generating...');
     setCurrentError(null);
     try {
       const controller = new AbortController();
@@ -121,6 +121,7 @@ export default (props: { sessionImg: string }) => {
         }),
         signal: controller.signal,
       });
+      setCurrentAssistantMessage('');
       if (!response.ok) {
         const error = await response.json();
         console.error(error.error);
