@@ -83,20 +83,20 @@ docker-compose down
 
 配置本地或者部署的环境变量
 
-| 名称                         | 描述                                                                                       | 默认                               |
-| ---------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------- |
-| `OPENAI_API_KEY`             | 你的 OpenAI API Key                                                                        | `null`                             |
-| `OPENAI_API_BASE_URL`        | 请求 OpenAI API 的自定义 Base URL.                                                         | `https://api.openai.com（非必需）` |
-| `OPENAI_API_MODEL`           | 使用的 OpenAI 模型。[模型列表](https://platform.openai.com/docs/api-reference/models/list) | `gpt-3.5-turbo（非必需）`          |
-| `NEXTAUTH_URL`               | 你的 站点域名                                                                              | `null`                             |
-| `NEXTAUTH_SECRET`            | 生成站点密钥[模型列表](https://next-auth.js.org/configuration/options)                     | `null`                             |
-| `UPSTASH_REDIS_REST_URL`     | [upStash redis](https://console.upstash.com/)                                              | `null`                             |
-| `UPSTASH_REDIS_REST_TOKEN`   | [upStash redis](https://console.upstash.com/)                                              | `null`                             |
-| `GITHUB_ID`                  | [Github OAuth](https://github.com/settings/developers)                                     | `null`                             |
-| `GITHUB_SECRET`              | [Github OAuth](https://github.com/settings/developers)                                     | `null`                             |
-| `PUSHER_APP_ID`              | [pusher](https://dashboard.pusher.com/)                                                    | `null`                             |
-| `PUBLIC_NEXT_PUSHER_APP_KEY` | [pusher](https://dashboard.pusher.com/)                                                    | `null`                             |
-| `PUSHER_APP_SECRET`          | [pusher](https://dashboard.pusher.com/)                                                    | `null`                             |
-| `PUBLIC_NEXT_PUSHER_CLUSTER` | [pusher](https://dashboard.pusher.com/)                                                    | `null`                             |
-| `GITHUB_ACCESS_TOKEN`        | github access token 上传图片图床                                                           | `null`                             |
-| `PUBLIC_OWNER_EMAIL`         | 你的 email gpt 权限                                                                        | `null`                             |
+| 名称 | 描述 | 默认 |
+| --- | --- | --- |
+| `OPENAI_API_KEY` | 你的 OpenAI API Key | `null` |
+| `OPENAI_API_BASE_URL` | 请求 OpenAI API 的自定义 Base URL. | `https://api.openai.com（非必需）` |
+| `OPENAI_API_MODEL` | 使用的 OpenAI 模型。[模型列表](https://platform.openai.com/docs/api-reference/models/list) | `gpt-3.5-turbo（非必需）` |
+| `NEXTAUTH_URL` | 你的 站点域名 | `null` |
+| `NEXTAUTH_SECRET` | 生成站点密钥[模型列表](https://next-auth.js.org/configuration/options) | `null` |
+| `UPSTASH_REDIS_REST_URL` | [upStash redis](https://console.upstash.com/) | `null` |
+| `UPSTASH_REDIS_REST_TOKEN` | [upStash redis](https://console.upstash.com/) | `null` |
+| `GITHUB_ID` | [Github OAuth](https://github.com/settings/developers)  | `null` |
+| `GITHUB_SECRET` | [Github OAuth](https://github.com/settings/developers) | `null` |
+| `PUSHER_APP_ID` | [pusher](https://dashboard.pusher.com/) | `null` |
+| `PUBLIC_NEXT_PUSHER_APP_KEY` | [pusher](https://dashboard.pusher.com/) | `null` |
+| `PUSHER_APP_SECRET` | [pusher](https://dashboard.pusher.com/) | `null` |
+| `PUBLIC_NEXT_PUSHER_CLUSTER` | [pusher](https://dashboard.pusher.com/) | `null` |
+| `GITHUB_ACCESS_TOKEN` | github access token 上传图片图床 | `null` |
+| `PUBLIC_OWNER_EMAIL` | 你的 email gpt权限 | `null` |
