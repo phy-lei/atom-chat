@@ -1,6 +1,8 @@
-import { createSignal, onMount, onCleanup } from 'solid-js';
+import { createSignal, onMount, onCleanup, Show } from 'solid-js';
 import toast from 'solid-toast';
+import clsx from 'clsx';
 import Button from './ui/Button';
+import EmojiPickerModal from './EmojiPickerModal';
 import { EventName } from '@/utils/constants';
 
 interface ChatInputProps {
@@ -12,6 +14,7 @@ const ChatInput = (props: ChatInputProps) => {
   const [textareaRef, setTextareaRef] = createSignal<HTMLTextAreaElement>();
   const [isLoading, setIsLoading] = createSignal<boolean>(false);
   const [input, setInput] = createSignal<string>('');
+  const [showEmoji, setShowEmoji] = createSignal(false);
 
   const sendMessage = async (value: string) => {
     if (!value) return;
@@ -99,8 +102,17 @@ const ChatInput = (props: ChatInputProps) => {
     });
   });
 
+  const setEmoji = (emoji: string) => {
+    setInput((text) => (text += emoji));
+    setShowEmoji(false);
+  };
+
   return (
     <div class="border-t border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
+      <Show when={showEmoji()}>
+        <EmojiPickerModal setEmoji={setEmoji}></EmojiPickerModal>
+      </Show>
+
       <div class="relative flex flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
         <textarea
           ref={setTextareaRef}
@@ -120,15 +132,17 @@ const ChatInput = (props: ChatInputProps) => {
           autofocus
         ></textarea>
 
-        <div class="flex bg-(slate op-15) pr-2 pt-6">
-          <div class="flex-shrin-0">
-            <Button
-              isLoading={isLoading()}
-              onClick={() => sendMessage(input())}
-            >
-              Post
-            </Button>
-          </div>
+        <div class="bg-(slate op-15) flex items-center pr-2">
+          <i
+            class={clsx(
+              'w-10 h-10 mr-2 cursor-pointer color-gray',
+              showEmoji() ? 'i-carbon:keyboard' : 'i-carbon:face-activated'
+            )}
+            onclick={() => setShowEmoji((flag) => !flag)}
+          ></i>
+          <Button isLoading={isLoading()} onClick={() => sendMessage(input())}>
+            Post
+          </Button>
         </div>
       </div>
     </div>

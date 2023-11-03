@@ -67,5 +67,10 @@ export default defineConfig({
     'sys-edit-btn': 'inline-fcc gap-1 text-sm bg-slate/20 px-2 py-1 rounded-md transition-colors cursor-pointer hover:bg-slate/50',
     'stick-btn-on': '!bg-$c-fg text-$c-bg hover:op-80',
     'container-atom': 'px-6 py-6 mr-auto ml-auto xl:max-w-1360px',
+    'border-base': 'border-light-700 dark:border-[#2a2a2a]',
+    'border-b-base': 'border-b-light-700 dark:border-b-[#2a2a2a]',
+    'border-base-100': 'border-light-900 dark:border-[#404040]',
+    'hv-base': 'transition-colors cursor-pointer hover:bg-[rgba(0,0,0,0.1)]',
+    'input-base': 'bg-transparent placeholder:op-50 dark:placeholder:op-20 focus:(ring-0 outline-none) resize-none',
   }],
 })
