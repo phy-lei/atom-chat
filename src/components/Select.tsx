@@ -34,7 +34,7 @@ const Select = () => {
       </div>
       <div
         class={clsx(
-          'absolute top-12 w-50 h-40 bg-white overflow-y-auto rounded border border-gray-200 pt-1 pb-1',
+          'absolute top-12 w-50 h-40 bg-white overflow-y-auto rounded border border-gray-200 pt-1 pb-1 scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2',
           show() ? 'block' : 'hidden'
         )}
       >

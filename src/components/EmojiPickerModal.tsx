@@ -32,7 +32,7 @@ const EmojiPickerModal = (props: Props) => {
           }}
         />
       </div>
-      <div class="mt-2 -mx-1 h-[16rem] overflow-auto">
+      <div class="mt-2 -mx-1 h-[16rem] overflow-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2">
         <Suspense
           fallback={
             <div class="mt-[8rem] mx-auto fcc text-base i-carbon:circle-solid  text-slate-400 animate-ping" />
