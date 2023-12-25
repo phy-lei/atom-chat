@@ -37,9 +37,14 @@ const Messages = (props: MessagesProps) => {
   });
 
   onMount(() => {
-    pusherClient.subscribe(toPusherKey(`chat:${props.chatId}`));
+    const channel = pusherClient.subscribe(toPusherKey(`chat:${props.chatId}`));
 
     const messageHandler = (message: Message) => {
+      console.log(
+        '%c [ messageHandler ]',
+        'font-size:13px; background:pink; color:#bf2c9f;',
+        message
+      );
       setMessages((prev) => [message, ...prev]);
     };
 
@@ -53,18 +58,45 @@ const Messages = (props: MessagesProps) => {
       });
     };
 
+    const checkOnlineHandler = ({ senderId, online }) => {
+      console.log(
+        '%c [ checkOnlineHandler ]',
+        'font-size:13px; background:pink; color:#bf2c9f;',
+        { senderId, online }
+      );
+    };
+
     const scrollToBottom = () => {
       setY(scrollEl().scrollHeight);
     };
 
-    pusherClient.bind('incoming-message', messageHandler);
-    pusherClient.bind('delete-message', delMessageHandler);
+    channel.bind('incoming-message', messageHandler);
+    channel.bind('delete-message', delMessageHandler);
+    channel.bind('check-online', checkOnlineHandler);
     window.addEventListener(EventName.SCROLL_TO_BOTTOM, scrollToBottom);
 
+    fetch('/api/message/online', {
+      method: 'POST',
+      body: JSON.stringify({
+        chatId: props.chatId,
+        online: true,
+      }),
+    });
+
     onCleanup(() => {
-      pusherClient.unsubscribe(toPusherKey(`chat:${props.chatId}`));
-      pusherClient.unbind('incoming-message', messageHandler);
-      window.removeEventListener(EventName.SCROLL_TO_BOTTOM, scrollToBottom);
+      fetch('/api/message/online', {
+        method: 'POST',
+        body: JSON.stringify({
+          chatId: props.chatId,
+          online: false,
+        }),
+      }).then(() => {
+        channel.disconnect();
+        channel.unbind('incoming-message', messageHandler);
+        channel.unbind('delete-message', delMessageHandler);
+        channel.unbind('check-online', checkOnlineHandler);
+        window.removeEventListener(EventName.SCROLL_TO_BOTTOM, scrollToBottom);
+      });
     });
   });
 

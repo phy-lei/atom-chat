@@ -35,6 +35,7 @@ const title = `Phy-chat | ${chatPartner.name} chat `;
 ---
 
 <IndexLayout title={title} session={session}>
+  <astro-template data-chat-id={chatId}></astro-template>
   <div
     class="flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]"
   >
@@ -57,6 +58,7 @@ const title = `Phy-chat | ${chatPartner.name} chat `;
             <span class="text-gray-700 mr-3 font-semibold">
               {chatPartner?.name}
             </span>
+            <div class="rounded-full w-2 h-2 bg-green"></div>
           </div>
 
           <span class="text-sm text-gray-600">{chatPartner?.email}</span>
@@ -74,5 +76,27 @@ const title = `Phy-chat | ${chatPartner.name} chat `;
     <ChatInput chatId={chatId} chatPartner={chatPartner} client:load />
   </div>
 </IndexLayout>
+<script>
+  import { pusherClient } from '@/server/pusherClient';
+  import { toPusherKey } from '@/utils';
 
-<style></style>
+  class AstroTemplate extends HTMLElement {
+    constructor() {
+      super();
+
+      // 从 data（数据）属性中读取消息。
+      const chatId = this.dataset.chatId;
+
+      window.addEventListener('load', (event) => {
+        console.log(
+          '%c [ xxx ]',
+          'font-size:13px; background:pink; color:#bf2c9f;',
+          chatId
+        );
+        pusherClient.subscribe(toPusherKey(`chat:${chatId}-check-online`));
+      });
+    }
+  }
+
+  customElements.define('astro-template', AstroTemplate);
+</script>
