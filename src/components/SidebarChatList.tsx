@@ -1,9 +1,17 @@
-import { createSignal, onMount, onCleanup, Show, For } from 'solid-js';
+import {
+  createSignal,
+  createEffect,
+  onMount,
+  onCleanup,
+  Show,
+  For,
+} from 'solid-js';
 import toast from 'solid-toast';
 import { pusherClient } from '@/server/pusherClient';
 import { toPusherKey, chatHrefConstructor } from '@/utils';
 import UnseenChatToast from './UnseenChatToast';
 import $message from '@/components/$message';
+import { EventName } from '@/utils/constants';
 
 interface SidebarChatListProps {
   friends: User[];
@@ -22,6 +30,7 @@ const SidebarChatList = (props: SidebarChatListProps) => {
   const [unseenMessages, setUnseenMessages] = createSignal<
     Record<string, Message[]>
   >({});
+  const [onLineFriendsId, setOnLineFriendsId] = createSignal({});
 
   const [activeChats, setActiveChats] = createSignal<User[]>(
     props.friends.sort()
@@ -29,9 +38,34 @@ const SidebarChatList = (props: SidebarChatListProps) => {
 
   const [activeAiPage, setActiveAiPage] = createSignal(false);
 
+  const getOnlineMap = async () => {
+    const res = await fetch('/api/message/online', {
+      method: 'POST',
+      body: JSON.stringify({
+        friendId: props.sessionId,
+        isOnline: true,
+      }),
+    });
+    const { data } = await res.json();
+    setOnLineFriendsId(data);
+  };
+
+  createEffect(() => {
+    window.dispatchEvent;
+    const event = new CustomEvent(EventName.SET_ONLINE_USER_MAP, {
+      detail: onLineFriendsId(),
+    });
+    window.dispatchEvent(event);
+  });
+
   onMount(() => {
-    pusherClient.subscribe(toPusherKey(`user:${props.sessionId}:chats`));
-    pusherClient.subscribe(toPusherKey(`user:${props.sessionId}:friends`));
+    const channel1 = pusherClient.subscribe(
+      toPusherKey(`user:${props.sessionId}:chats`)
+    );
+    const channel2 = pusherClient.subscribe(
+      toPusherKey(`user:${props.sessionId}:friends`)
+    );
+    const channel3 = pusherClient.subscribe('check__online');
 
     const newFriendHandler = (newFriend: User) => {
       setActiveChats((prev) => [...prev, newFriend]);
@@ -84,18 +118,54 @@ const SidebarChatList = (props: SidebarChatListProps) => {
       }
     };
 
-    pusherClient.bind('new_message', chatHandler);
-    pusherClient.bind('new_friend', newFriendHandler);
+    const checkOnlineHandler = ({ friendId, isOnline }) => {
+      if (friendId === props.sessionId) return;
+      setOnLineFriendsId({
+        ...onLineFriendsId(),
+        [friendId]: isOnline,
+      });
+    };
+
+    function visibilitychange() {
+      var isHidden = document.hidden;
+      if (isHidden) {
+        fetch('/api/message/online', {
+          method: 'POST',
+          body: JSON.stringify({
+            friendId: props.sessionId,
+            isOnline: false,
+          }),
+        });
+      } else {
+        fetch('/api/message/online', {
+          method: 'POST',
+          body: JSON.stringify({
+            friendId: props.sessionId,
+            isOnline: true,
+          }),
+        });
+      }
+    }
+
+    channel1.bind('new_message', chatHandler);
+    channel2.bind('new_friend', newFriendHandler);
+    channel3.bind('new_online', checkOnlineHandler);
     // viewTransition change event
     document.addEventListener('astro:after-swap', transitionChange);
+
+    getOnlineMap();
+
+    document.addEventListener('visibilitychange', visibilitychange);
 
     onCleanup(() => {
       pusherClient.unsubscribe(toPusherKey(`user:${props.sessionId}:chats`));
       pusherClient.unsubscribe(toPusherKey(`user:${props.sessionId}:friends`));
 
-      pusherClient.unbind('new_message', chatHandler);
-      pusherClient.unbind('new_friend', newFriendHandler);
+      channel1.unbind('new_message', chatHandler);
+      channel2.unbind('new_friend', newFriendHandler);
+      channel3.unbind('new_online', checkOnlineHandler);
       document.removeEventListener('astro:after-swap', transitionChange);
+      document.removeEventListener('visibilitychange', visibilitychange);
     });
   });
 
@@ -130,13 +200,13 @@ const SidebarChatList = (props: SidebarChatListProps) => {
         <li>
           <a
             href={`/dashboard/ai`}
-            class="color-#FF7E33 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+            class="color-#FF7E33 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-1 rounded-md p-2 text-sm leading-6 font-semibold"
           >
             Rayone🤖️
+            <div class="rounded-full w-1.5 h-1.5 bg-green self-baseline"></div>
           </a>
         </li>
       </Show>
-
       <For each={activeChats()}>
         {(friend, index) => {
           return (
@@ -146,14 +216,14 @@ const SidebarChatList = (props: SidebarChatListProps) => {
                   props.sessionId,
                   friend.id
                 )}`}
-                class="text-gray-700 group-hover:text-indigo-600  flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                class="text-gray-700 group-hover:text-indigo-600  flex items-center gap-x-1 rounded-md p-2 text-sm leading-6 font-semibold"
                 rel="prefetch"
               >
                 {friend.name}
-                <Show
-                  when={unseenMessages()[friend.id]?.length > 0}
-                  fallback={null}
-                >
+                <Show when={onLineFriendsId()[friend.id]} fallback={null}>
+                  <div class="rounded-full w-1.5 h-1.5 bg-green self-baseline"></div>
+                </Show>
+                <Show when={unseenMessages()[friend.id]?.length > 0}>
                   <div class="bg-indigo-600 font-medium text-xs text-white w-4 h-4 rounded-full flex justify-center items-center">
                     {unseenMessages()[friend.id].length}
                   </div>

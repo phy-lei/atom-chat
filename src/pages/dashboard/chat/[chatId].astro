@@ -35,7 +35,6 @@ const title = `Phy-chat | ${chatPartner.name} chat `;
 ---
 
 <IndexLayout title={title} session={session}>
-  <astro-template data-chat-id={chatId}></astro-template>
   <div
     class="flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]"
   >
@@ -58,7 +57,9 @@ const title = `Phy-chat | ${chatPartner.name} chat `;
             <span class="text-gray-700 mr-3 font-semibold">
               {chatPartner?.name}
             </span>
-            <div class="rounded-full w-2 h-2 bg-green"></div>
+            <astro-greet data-chat-id={chatPartner.id}>
+              <div class="rounded-full w-2 h-2 bg-green"></div>
+            </astro-greet>
           </div>
 
           <span class="text-sm text-gray-600">{chatPartner?.email}</span>
@@ -77,26 +78,30 @@ const title = `Phy-chat | ${chatPartner.name} chat `;
   </div>
 </IndexLayout>
 <script>
-  import { pusherClient } from '@/server/pusherClient';
-  import { toPusherKey } from '@/utils';
+  import { EventName } from '@/utils/constants';
 
-  class AstroTemplate extends HTMLElement {
+  class AstroGreet extends HTMLElement {
     constructor() {
       super();
 
-      // 从 data（数据）属性中读取消息。
       const chatId = this.dataset.chatId;
+      const child = this.querySelector('div');
 
-      window.addEventListener('load', (event) => {
-        console.log(
-          '%c [ xxx ]',
-          'font-size:13px; background:pink; color:#bf2c9f;',
-          chatId
-        );
-        pusherClient.subscribe(toPusherKey(`chat:${chatId}-check-online`));
-      });
+      window.addEventListener(
+        EventName.SET_ONLINE_USER_MAP,
+        (e: CustomEvent) => {
+          const onlineMap = e.detail;
+          if (onlineMap[chatId]) {
+            child.classList.remove('bg-red');
+            child.classList.add('bg-green');
+          } else {
+            child.classList.remove('bg-green');
+            child.classList.add('bg-red');
+          }
+        }
+      );
     }
   }
 
-  customElements.define('astro-template', AstroTemplate);
+  customElements.define('astro-greet', AstroGreet);
 </script>

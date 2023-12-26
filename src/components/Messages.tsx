@@ -40,11 +40,6 @@ const Messages = (props: MessagesProps) => {
     const channel = pusherClient.subscribe(toPusherKey(`chat:${props.chatId}`));
 
     const messageHandler = (message: Message) => {
-      console.log(
-        '%c [ messageHandler ]',
-        'font-size:13px; background:pink; color:#bf2c9f;',
-        message
-      );
       setMessages((prev) => [message, ...prev]);
     };
 
@@ -58,30 +53,13 @@ const Messages = (props: MessagesProps) => {
       });
     };
 
-    const checkOnlineHandler = ({ senderId, online }) => {
-      console.log(
-        '%c [ checkOnlineHandler ]',
-        'font-size:13px; background:pink; color:#bf2c9f;',
-        { senderId, online }
-      );
-    };
-
     const scrollToBottom = () => {
       setY(scrollEl().scrollHeight);
     };
 
     channel.bind('incoming-message', messageHandler);
     channel.bind('delete-message', delMessageHandler);
-    channel.bind('check-online', checkOnlineHandler);
     window.addEventListener(EventName.SCROLL_TO_BOTTOM, scrollToBottom);
-
-    fetch('/api/message/online', {
-      method: 'POST',
-      body: JSON.stringify({
-        chatId: props.chatId,
-        online: true,
-      }),
-    });
 
     onCleanup(() => {
       fetch('/api/message/online', {
@@ -94,7 +72,6 @@ const Messages = (props: MessagesProps) => {
         channel.disconnect();
         channel.unbind('incoming-message', messageHandler);
         channel.unbind('delete-message', delMessageHandler);
-        channel.unbind('check-online', checkOnlineHandler);
         window.removeEventListener(EventName.SCROLL_TO_BOTTOM, scrollToBottom);
       });
     });
