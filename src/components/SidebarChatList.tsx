@@ -119,11 +119,6 @@ const SidebarChatList = (props: SidebarChatListProps) => {
     };
 
     const checkOnlineHandler = ({ friendId, isOnline }) => {
-      console.log(
-        '%c [ friendId ]',
-        'font-size:13px; background:pink; color:#bf2c9f;',
-        friendId
-      );
       if (friendId === props.sessionId) return;
       setOnLineFriendsId({
         ...onLineFriendsId(),
