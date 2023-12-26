@@ -15,10 +15,12 @@ const FriendRequestSidebarOptions = (
   );
 
   onMount(() => {
-    pusherClient.subscribe(
+    const channel1 = pusherClient.subscribe(
       toPusherKey(`user:${props.sessionId}:incoming_friend_requests`)
     );
-    pusherClient.subscribe(toPusherKey(`user:${props.sessionId}:friends`));
+    const channel2 = pusherClient.subscribe(
+      toPusherKey(`user:${props.sessionId}:friends`)
+    );
 
     const friendRequestHandler = () => {
       setUnseenRequestCount((prev) => prev + 1);
@@ -28,17 +30,15 @@ const FriendRequestSidebarOptions = (
       setUnseenRequestCount((prev) => prev - 1);
     };
 
-    pusherClient.bind('incoming_friend_requests', friendRequestHandler);
-    pusherClient.bind('new_friend', addedFriendHandler);
+    channel1.bind('incoming_friend_requests', friendRequestHandler);
+    channel2.bind('new_friend', addedFriendHandler);
 
     onCleanup(() => {
-      pusherClient.unsubscribe(
-        toPusherKey(`user:${props.sessionId}:incoming_friend_requests`)
-      );
-      pusherClient.unsubscribe(toPusherKey(`user:${props.sessionId}:friends`));
+      channel1.disconnect();
+      channel2.disconnect();
 
-      pusherClient.unbind('new_friend', addedFriendHandler);
-      pusherClient.unbind('incoming_friend_requests', friendRequestHandler);
+      channel1.unbind('incoming_friend_requests', friendRequestHandler);
+      channel2.unbind('new_friend', addedFriendHandler);
     });
   });
 

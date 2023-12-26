@@ -13,7 +13,7 @@ const FriendRequests = (props: FriendRequestsProps) => {
   >(props.incomingFriendRequests);
 
   onMount(() => {
-    pusherClient.subscribe(
+    const channel = pusherClient.subscribe(
       toPusherKey(`user:${props.sessionId}:incoming_friend_requests`)
     );
 
@@ -24,13 +24,11 @@ const FriendRequests = (props: FriendRequestsProps) => {
       setFriendRequests((prev) => [...prev, { senderId, senderEmail }]);
     };
 
-    pusherClient.bind('incoming_friend_requests', friendRequestHandler);
+    channel.bind('incoming_friend_requests', friendRequestHandler);
 
     onCleanup(() => {
-      pusherClient.unsubscribe(
-        toPusherKey(`user:${props.sessionId}:incoming_friend_requests`)
-      );
-      pusherClient.unbind('incoming_friend_requests', friendRequestHandler);
+      channel.disconnect();
+      channel.unbind('incoming_friend_requests', friendRequestHandler);
     });
   });
 
