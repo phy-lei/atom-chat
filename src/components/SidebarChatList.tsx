@@ -119,6 +119,11 @@ const SidebarChatList = (props: SidebarChatListProps) => {
     };
 
     const checkOnlineHandler = ({ friendId, isOnline }) => {
+      console.log(
+        '%c [ friendId ]',
+        'font-size:13px; background:pink; color:#bf2c9f;',
+        friendId
+      );
       if (friendId === props.sessionId) return;
       setOnLineFriendsId({
         ...onLineFriendsId(),
@@ -153,13 +158,23 @@ const SidebarChatList = (props: SidebarChatListProps) => {
     // viewTransition change event
     document.addEventListener('astro:after-swap', transitionChange);
 
+    window.addEventListener('beforeunload', (event) => {
+      fetch('/api/message/online', {
+        method: 'POST',
+        body: JSON.stringify({
+          friendId: props.sessionId,
+          isOnline: false,
+        }),
+      });
+    });
     getOnlineMap();
 
     document.addEventListener('visibilitychange', visibilitychange);
 
     onCleanup(() => {
-      pusherClient.unsubscribe(toPusherKey(`user:${props.sessionId}:chats`));
-      pusherClient.unsubscribe(toPusherKey(`user:${props.sessionId}:friends`));
+      channel1.disconnect();
+      channel2.disconnect();
+      channel3.disconnect();
 
       channel1.unbind('new_message', chatHandler);
       channel2.unbind('new_friend', newFriendHandler);
