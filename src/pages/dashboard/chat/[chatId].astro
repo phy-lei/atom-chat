@@ -38,34 +38,42 @@ const title = `Phy-chat | ${chatPartner.name} chat `;
   <div
     class="flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]"
   >
-    <div
-      class="flex sm:items-center justify-between py-3 border-b-2 border-gray-200"
-    >
-      <div class="relative flex items-center space-x-4">
-        <div class="relative">
-          <div class="relative w-8 sm:w-12 h-8 sm:h-12">
-            <img
-              class="rounded-full"
-              src={chatPartner?.image}
-              alt={`${chatPartner?.name} profile picture`}
-            />
-          </div>
-        </div>
-
-        <div class="flex flex-col leading-tight">
-          <div class="text-xl flex items-center">
-            <span class="text-gray-700 mr-1.5 font-semibold">
-              {chatPartner?.name}
-            </span>
-            <astro-greet data-chat-id={chatPartner.id}>
-              <div class="rounded-full w-2 h-2 bg-green bg-red"></div>
-            </astro-greet>
+    <astro-greet data-chat-id={chatPartner.id} data-own-name={user.name}>
+      <div
+        class="flex sm:items-center justify-between py-3 border-b-2 border-gray-200"
+      >
+        <div class="relative flex items-center space-x-4">
+          <div class="relative">
+            <div class="relative w-8 sm:w-12 h-8 sm:h-12">
+              <img
+                class="rounded-full"
+                src={chatPartner?.image}
+                alt={`${chatPartner?.name} profile picture`}
+              />
+            </div>
           </div>
 
-          <span class="text-sm text-gray-600">{chatPartner?.email}</span>
+          <div class="flex flex-col leading-tight">
+            <div class="text-xl flex items-center">
+              <span class="text-gray-700 mr-1.5 font-semibold">
+                {chatPartner?.name}
+              </span>
+
+              <div
+                id="online-status"
+                class="rounded-full w-2 h-2 bg-green bg-red"
+              >
+              </div>
+            </div>
+
+            <span class="text-sm text-gray-600">{chatPartner?.email}</span>
+          </div>
         </div>
+        <i
+          class="i-carbon:notification-filled text-indigo-400 hover:text-indigo-600 cursor-pointer"
+          id="notification-btn"></i>
       </div>
-    </div>
+    </astro-greet>
     <Messages
       chatId={chatId}
       chatPartner={chatPartner}
@@ -79,27 +87,61 @@ const title = `Phy-chat | ${chatPartner.name} chat `;
 </IndexLayout>
 <script>
   import { EventName } from '@/utils/constants';
+  import toast from 'solid-toast';
 
   class AstroGreet extends HTMLElement {
     constructor() {
       super();
 
       const chatId = this.dataset.chatId;
-      const child = this.querySelector('div');
+      const ownName = this.dataset.ownName;
+      const onlineStatus = this.querySelector('#online-status');
+      const notifyBtn = this.querySelector('#notification-btn');
 
       window.addEventListener(
         EventName.SET_ONLINE_USER_MAP,
         (e: CustomEvent) => {
           const onlineMap = e.detail;
           if (onlineMap[chatId]) {
-            child.classList.remove('bg-red');
-            child.classList.add('bg-green');
+            onlineStatus.classList.remove('bg-red');
+            onlineStatus.classList.add('bg-green');
           } else {
-            child.classList.remove('bg-green');
-            child.classList.add('bg-red');
+            onlineStatus.classList.remove('bg-green');
+            onlineStatus.classList.add('bg-red');
           }
         }
       );
+
+      notifyBtn.addEventListener('click', () => {
+        if (!('Notification' in window)) {
+          // Check if the browser supports notifications
+          toast.error('This browser does not support desktop notification');
+        } else if (Notification.permission === 'granted') {
+          // Check whether notification permissions have already been granted;
+          // if so, create a notification
+          fetch('/api/message/notify', {
+            method: 'post',
+            body: JSON.stringify({
+              userId: chatId,
+              friend: ownName,
+            }),
+          });
+        } else if (Notification.permission !== 'denied') {
+          // We need to ask the user for permission
+          Notification.requestPermission().then((permission) => {
+            // If the user accepts, let's create a notification
+            if (permission === 'granted') {
+              fetch('/api/message/notify', {
+                method: 'post',
+                body: JSON.stringify({
+                  userId: chatId,
+                  friend: ownName,
+                }),
+              });
+            }
+          });
+        }
+      });
     }
   }
 

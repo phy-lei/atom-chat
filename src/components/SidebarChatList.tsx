@@ -66,6 +66,9 @@ const SidebarChatList = (props: SidebarChatListProps) => {
       toPusherKey(`user:${props.sessionId}:friends`)
     );
     const channel3 = pusherClient.subscribe('check__online');
+    const channel4 = pusherClient.subscribe(
+      toPusherKey(`user:${props.sessionId}:notify`)
+    );
 
     const newFriendHandler = (newFriend: User) => {
       setActiveChats((prev) => [...prev, newFriend]);
@@ -147,9 +150,16 @@ const SidebarChatList = (props: SidebarChatListProps) => {
       }
     }
 
+    const notifyHandler = (friend) => {
+      const notification = new Notification(
+        `Master, Your friend ${friend} need u`
+      );
+    };
+
     channel1.bind('new_message', chatHandler);
     channel2.bind('new_friend', newFriendHandler);
     channel3.bind('new_online', checkOnlineHandler);
+    channel4.bind('bell', notifyHandler);
     // viewTransition change event
     document.addEventListener('astro:after-swap', transitionChange);
 
@@ -170,10 +180,12 @@ const SidebarChatList = (props: SidebarChatListProps) => {
       channel1.disconnect();
       channel2.disconnect();
       channel3.disconnect();
+      channel4.disconnect();
 
       channel1.unbind('new_message', chatHandler);
       channel2.unbind('new_friend', newFriendHandler);
       channel3.unbind('new_online', checkOnlineHandler);
+      channel4.unbind('bell', notifyHandler);
       document.removeEventListener('astro:after-swap', transitionChange);
       document.removeEventListener('visibilitychange', visibilitychange);
     });
