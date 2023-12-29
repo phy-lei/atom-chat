@@ -254,6 +254,13 @@ const aiPage =
           // Check whether notification permissions have already been granted;
           // if so, create a notification
           const notification = new Notification('Hi there!');
+          notification.onerror = function (e) {
+            console.log(
+              '%c [ xxx ]',
+              'font-size:13px; background:pink; color:#bf2c9f;',
+              e
+            );
+          };
           // …
         } else if (Notification.permission !== 'denied') {
           // We need to ask the user for permission
