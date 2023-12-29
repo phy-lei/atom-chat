@@ -65,6 +65,7 @@ const aiPage =
             <a href="/dashboard" class="flex h-8 shrink-0 items-center">
               <i class="i-bx:bxs-paper-plane h-8 w-8 text-indigo-600"></i>
             </a>
+
             <Button class="gap-1" id="menuBtn">
               Menu <i class="i-carbon:menu"></i>
             </Button>
@@ -80,6 +81,10 @@ const aiPage =
           <a href="/dashboard" class="flex h-16 shrink-0 items-center">
             <i class="i-bx:bxs-paper-plane h-8 w-8 text-indigo-600"></i>
           </a>
+          <i
+            class="i-carbon:notification-filled text-indigo-600 cursor-pointer"
+            id="notification-btn"></i>
+
           <i
             id="close-btn"
             class="i-carbon:close-large cursor-pointer hidden <sm:block"></i>
@@ -230,9 +235,44 @@ const aiPage =
       const menuBtn = document.getElementById('menuBtn');
       const sideBar = document.getElementById('sideBar');
       const closeBtn = document.getElementById('close-btn');
+      const notifyBtn = document.getElementById('notification-btn');
       const OPEN_SIDEBAR_CLASSNAME = 'sider_bar__fixed__open';
       menuBtn.addEventListener('click', () => {
         sideBar.classList.add(OPEN_SIDEBAR_CLASSNAME);
+      });
+
+      notifyBtn.addEventListener('click', () => {
+        console.log(
+          '%c [ xxx ]',
+          'font-size:13px; background:pink; color:#bf2c9f;',
+          Notification.permission
+        );
+        if (!('Notification' in window)) {
+          // Check if the browser supports notifications
+          alert('This browser does not support desktop notification');
+        } else if (Notification.permission === 'granted') {
+          // Check whether notification permissions have already been granted;
+          // if so, create a notification
+          const notification = new Notification('Hi there!');
+          // …
+        } else if (Notification.permission !== 'denied') {
+          // We need to ask the user for permission
+          Notification.requestPermission().then((permission) => {
+            // If the user accepts, let's create a notification
+            if (permission === 'granted') {
+              const notification = new Notification('Hi there!');
+
+              notification.onerror = function (e) {
+                console.log(
+                  '%c [ xxx ]',
+                  'font-size:13px; background:pink; color:#bf2c9f;',
+                  e
+                );
+              };
+              // …
+            }
+          });
+        }
       });
 
       function closeHandler() {
