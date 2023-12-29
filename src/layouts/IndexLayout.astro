@@ -253,29 +253,34 @@ const aiPage =
         } else if (Notification.permission === 'granted') {
           // Check whether notification permissions have already been granted;
           // if so, create a notification
-          const notification = new Notification('Hi there!');
-          notification.onerror = function (e) {
-            console.log(
-              '%c [ xxx ]',
-              'font-size:13px; background:pink; color:#bf2c9f;',
-              e
-            );
-          };
+          setTimeout(() => {
+            const notification = new Notification('Hi there!');
+
+            notification.onerror = function (e) {
+              console.log(
+                '%c [ xxx ]',
+                'font-size:13px; background:pink; color:#bf2c9f;',
+                e
+              );
+            };
+          }, 3000);
           // …
         } else if (Notification.permission !== 'denied') {
           // We need to ask the user for permission
           Notification.requestPermission().then((permission) => {
             // If the user accepts, let's create a notification
             if (permission === 'granted') {
-              const notification = new Notification('Hi there!');
+              setTimeout(() => {
+                const notification = new Notification('Hi there!');
 
-              notification.onerror = function (e) {
-                console.log(
-                  '%c [ xxx ]',
-                  'font-size:13px; background:pink; color:#bf2c9f;',
-                  e
-                );
-              };
+                notification.onerror = function (e) {
+                  console.log(
+                    '%c [ xxx ]',
+                    'font-size:13px; background:pink; color:#bf2c9f;',
+                    e
+                  );
+                };
+              }, 3000);
               // …
             }
           });
