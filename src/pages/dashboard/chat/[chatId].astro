@@ -112,6 +112,21 @@ const title = `Phy-chat | ${chatPartner.name} chat `;
         }
       );
 
+      const notifyHttp = async ({ chatId, ownName }) => {
+        const res = await fetch('/api/message/notify', {
+          method: 'post',
+          body: JSON.stringify({
+            userId: chatId,
+            friend: ownName,
+          }),
+        });
+        if (res.ok) {
+          toast.success('Already notify your friend.');
+        } else {
+          toast.error('Something went wrong.');
+        }
+      };
+
       notifyBtn.addEventListener('click', () => {
         if (!('Notification' in window)) {
           // Check if the browser supports notifications
@@ -119,25 +134,13 @@ const title = `Phy-chat | ${chatPartner.name} chat `;
         } else if (Notification.permission === 'granted') {
           // Check whether notification permissions have already been granted;
           // if so, create a notification
-          fetch('/api/message/notify', {
-            method: 'post',
-            body: JSON.stringify({
-              userId: chatId,
-              friend: ownName,
-            }),
-          });
+          notifyHttp({ chatId, ownName });
         } else if (Notification.permission !== 'denied') {
           // We need to ask the user for permission
           Notification.requestPermission().then((permission) => {
             // If the user accepts, let's create a notification
             if (permission === 'granted') {
-              fetch('/api/message/notify', {
-                method: 'post',
-                body: JSON.stringify({
-                  userId: chatId,
-                  friend: ownName,
-                }),
-              });
+              notifyHttp({ chatId, ownName });
             }
           });
         }

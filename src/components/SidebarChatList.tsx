@@ -152,7 +152,7 @@ const SidebarChatList = (props: SidebarChatListProps) => {
 
     const notifyHandler = (friend) => {
       const notification = new Notification(
-        `Master, Your friend ${friend} need u`
+        `Master, Your friend ${friend} need u!`
       );
     };
 

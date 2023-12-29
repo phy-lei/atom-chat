@@ -14,7 +14,7 @@ export const POST: APIRoute = async (context) => {
       message: 'Unauthorized',
     }), { status: 401 })
 
-    await pusherServer.trigger(toPusherKey(`user:${userId}:notify`), 'bell', { friend })
+    await pusherServer.trigger(toPusherKey(`user:${userId}:notify`), 'bell', friend)
 
     return new Response(JSON.stringify({
       message: 'Ok',
