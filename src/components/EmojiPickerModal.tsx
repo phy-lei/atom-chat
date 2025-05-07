@@ -1,6 +1,6 @@
 import { Suspense, createSignal } from 'solid-js';
-import { EmojiPicker } from 'solid-emoji-picker';
-import type { Emoji } from 'solid-emoji-picker';
+import { EmojiPicker } from './Emoji';
+import type { Emoji } from './Emoji';
 import '@/assets/emoji-picker.css';
 
 interface Props {

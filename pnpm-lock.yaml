@@ -71,9 +71,6 @@ importers:
       pusher-js:
         specifier: ^8.3.0
         version: 8.3.0
-      solid-emoji-picker:
-        specifier: ^0.2.1
-        version: 0.2.1(solid-js@1.7.11)
       solid-js:
         specifier: ^1.7.11
         version: 1.7.11
@@ -1475,9 +1472,6 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
-
-  '@panva/hkdf@1.1.1':
-    resolution: {integrity: sha512-dhPeilub1NuIG0X5Kvhh9lH4iW3ZsHlnzwgwbOlgwQ2wG1IqFzsgHqmKPk3WzsdWAeaxKJxgM0+W433RmN45GA==}
 
   '@panva/hkdf@1.2.1':
     resolution: {integrity: sha512-6oclG6Y3PiDFcoyk8srjLfVKyMfVCKJ27JwNPViuXziFpmdz+MZnZN/aKY0JGXgYuO/VghU0jcOAZgWXZ1Dmrw==}
@@ -3979,9 +3973,6 @@ packages:
     peerDependencies:
       preact: '>=10'
 
-  preact@10.18.1:
-    resolution: {integrity: sha512-mKUD7RRkQQM6s7Rkmi7IFkoEHjuFqRQUaXamO61E6Nn7vqF/bo7EZCmSyrUnp2UWHw0O7XjZ2eeXis+m7tf4lg==}
-
   preact@10.24.3:
     resolution: {integrity: sha512-Z2dPnBnMUfyQfSQ+GBdsGa16hz35YmLmtTLhM169uW944hYL6xzTYkJjC07j+Wosz733pMWx0fgON3JNw1jJQA==}
 
@@ -4328,12 +4319,6 @@ packages:
   slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
-
-  solid-emoji-picker@0.2.1:
-    resolution: {integrity: sha512-5V0Ji7rTVJBHrQw34+5Q07Gmde1w3B4WgfeKqzs7o/aabwoaTFrTFiDI+crZLvw5DzLhqKvsXBo2QbIC9Pc/ag==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      solid-js: ^1.2
 
   solid-js@1.7.11:
     resolution: {integrity: sha512-JkuvsHt8jqy7USsy9xJtT18aF9r2pFO+GB8JQ2XGTvtF49rGTObB46iebD25sE3qVNvIbwglXOXdALnJq9IHtQ==}
@@ -6438,8 +6423,6 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
-
-  '@panva/hkdf@1.1.1': {}
 
   '@panva/hkdf@1.2.1': {}
 
@@ -9232,14 +9215,14 @@ snapshots:
   next-auth@4.23.2(next@13.5.5(@babel/core@7.22.10)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@babel/runtime': 7.23.2
-      '@panva/hkdf': 1.1.1
+      '@panva/hkdf': 1.2.1
       cookie: 0.5.0
       jose: 4.15.4
       next: 13.5.5(@babel/core@7.22.10)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       oauth: 0.9.15
       openid-client: 5.6.1
-      preact: 10.18.1
-      preact-render-to-string: 5.2.6(preact@10.18.1)
+      preact: 10.24.3
+      preact-render-to-string: 5.2.6(preact@10.24.3)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       uuid: 8.3.2
@@ -9550,16 +9533,14 @@ snapshots:
       picocolors: 1.0.0
       source-map-js: 1.0.2
 
-  preact-render-to-string@5.2.6(preact@10.18.1):
+  preact-render-to-string@5.2.6(preact@10.24.3):
     dependencies:
-      preact: 10.18.1
+      preact: 10.24.3
       pretty-format: 3.8.0
 
   preact-render-to-string@6.5.11(preact@10.24.3):
     dependencies:
       preact: 10.24.3
-
-  preact@10.18.1: {}
 
   preact@10.24.3: {}
 
@@ -10007,10 +9988,6 @@ snapshots:
   sisteransi@1.0.5: {}
 
   slash@3.0.0: {}
-
-  solid-emoji-picker@0.2.1(solid-js@1.7.11):
-    dependencies:
-      solid-js: 1.7.11
 
   solid-js@1.7.11:
     dependencies:
