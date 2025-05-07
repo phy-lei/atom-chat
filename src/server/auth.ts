@@ -5,6 +5,7 @@ import { fetchRedis } from './redis'
 import { db } from './db'
 
 export const authOptions: SolidAuthConfig = {
+  basePath: '/api/auth',
   adapter: UpstashRedisAdapter(db) as any,
   session: {
     strategy: 'jwt',
